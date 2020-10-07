@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Subscription Manager</string>
+
     <string name="budget_breakdown">Budget Breakdown</string>
     <string name="monthly_total">Total Monthly Spending</string>
     <string name="top_expenses">Your Top Expenses</string>
