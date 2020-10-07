@@ -11,22 +11,30 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        bottomNav.selectedItemId = R.id.menu_home
+
         bottomNav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.menu_home -> {
-                    true
-                }
                 R.id.menu_calender -> {
-                    true
-                }
-                R.id.menu_edit_payments -> {
-                    true
+                    title="Calender"
+                    return@setOnNavigationItemSelectedListener true
                 }
                 R.id.menu_payments_breakdown -> {
-                    true
+                    title="Payments Breakdown"
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.menu_home -> {
+                    title="Subscription Manager"
+                    return@setOnNavigationItemSelectedListener true
                 }
                 R.id.menu_view_payments -> {
-                    true
+                    title="View Payments"
+                    loadFragment(SubListFragment())
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.menu_edit_payments -> {
+                    title="Edit Payments"
+                    return@setOnNavigationItemSelectedListener true
                 }
                 else -> false
             }

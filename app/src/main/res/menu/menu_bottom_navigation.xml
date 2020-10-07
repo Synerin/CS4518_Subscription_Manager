@@ -3,7 +3,7 @@
 
     <item android:id="@+id/menu_calender"
         android:title="Calender"
-        android:icon="@drawable/home_icon"
+        android:icon="@drawable/calender_icon"
         />
 
     <item android:id="@+id/menu_payments_breakdown"
