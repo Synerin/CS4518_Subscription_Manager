@@ -45,7 +45,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/type"
+            android:id="@+id/sub_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Type: Utility"
@@ -54,7 +54,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/importance"
+            android:id="@+id/sub_importance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="!!!"
@@ -62,7 +62,7 @@
             android:gravity="center"
             android:textSize="16sp" />
         <TextView
-            android:id="@+id/duedate"
+            android:id="@+id/sub_duedate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Due Date"

@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.menu_view_payments -> {
                     title="View Payments"
-                    loadFragment(SubListFragment())
+                    loadFragment(SubListFragment.newInstance())
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.menu_edit_payments -> {
