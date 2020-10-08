@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/menu_calender"
+        android:title="Calender"
+        android:icon="@drawable/calender_icon"
+        />
+
+    <item android:id="@+id/menu_payments_breakdown"
+        android:title="Payments Breakdown"
+        android:icon="@drawable/money_icon"
+        />
+
+    <item android:id="@+id/menu_home"
+        android:title="Home"
+        android:icon="@drawable/home_icon"
+        />
+
+    <item android:id="@+id/menu_view_payments"
+        android:title="View Payments"
+        android:icon="@drawable/payment_icon"
+        />
+
+    <item android:id="@+id/menu_edit_payments"
+        android:title="Edit Payments"
+        android:icon="@drawable/edit_icon"
+        />
+
+</menu>
