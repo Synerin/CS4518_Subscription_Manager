@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "31696519770",
+    "firebase_url": "https://subscriptionmanager4518.firebaseio.com",
+    "project_id": "subscriptionmanager4518",
+    "storage_bucket": "subscriptionmanager4518.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:31696519770:android:ca0b3b91875ba60a07ce63",
+        "android_client_info": {
+          "package_name": "com.example.subscriptionmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "31696519770-cn8et9i3kav2he17f16g0pmha50mh5ud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCG_iODLra-ufaFmRQuY3ErTe-K_Vo15-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "31696519770-cn8et9i3kav2he17f16g0pmha50mh5ud.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

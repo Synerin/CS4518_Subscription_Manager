@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/signUpBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient"
+    android:layout_gravity="center_horizontal"
+    tools:context=".SignUpActivity">
+
+
+    <TextView
+        android:id="@+id/loginText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="60dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textAlignment="center"
+        android:textSize="35sp"
+        android:textColor="@android:color/white"
+        android:textAllCaps="true"
+        android:text="Subscription \nManager" />
+
+    <TextView
+        android:id="@+id/emailTextSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/editTextEmailAddressSignUp"
+        app:layout_constraintStart_toStartOf="@id/editTextEmailAddressSignUp"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:text="Sign up with email" />
+
+    <EditText
+        android:id="@+id/editTextEmailAddressSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loginText"
+        android:layout_marginTop="80dp"
+        android:backgroundTint="@android:color/white"
+        android:textColorHint="@drawable/selector"
+        android:textColor="@android:color/white"
+        android:ems="15"
+        android:hint="Sign up with Email"
+        android:inputType="textEmailAddress" />
+
+    <TextView
+        android:id="@+id/passwordTextSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/editTextPasswordSignUp"
+        app:layout_constraintStart_toStartOf="@id/editTextPasswordSignUp"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:text="Password" />
+
+    <EditText
+        android:id="@+id/editTextPasswordSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextEmailAddressSignUp"
+        android:layout_marginTop="60dp"
+        android:backgroundTint="@android:color/white"
+        android:textColorHint="@drawable/selector"
+        android:textColor="@android:color/white"
+        android:ems="15"
+        android:hint="Password"
+        android:inputType="textPassword" />
+
+
+    <Button
+        android:id="@+id/signUpButton"
+        android:layout_width="120dp"
+        android:layout_height="55dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextPasswordSignUp"
+        android:layout_marginTop="50dp"
+        android:textColor="@color/colorPrimary"
+        android:text="Sign Up" />
+
+    <TextView
+        android:id="@+id/textViewSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/signUpButton"
+        android:layout_marginTop="60dp"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:text="Already have an account? Sign In!" />
+</androidx.constraintlayout.widget.ConstraintLayout>
