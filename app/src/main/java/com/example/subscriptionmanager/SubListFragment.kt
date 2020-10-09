@@ -9,6 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
 
 class SubListFragment : Fragment() {
     private lateinit var subListRecyclerView: RecyclerView
@@ -34,20 +37,27 @@ class SubListFragment : Fragment() {
     }
 
     private fun updateUI() {
+        val query: Query = FirebaseDatabase.getInstance().getReference("kids")
+
+        val options: FirebaseRecyclerOptions<Subscription> = FirebaseRecyclerOptions.Builder<Subscription>()
+            .setQuery(query, Subscription::class.java)
+            .build()
+
         val subs = subListViewModel.subs
         adapter = SubAdapter(subs)
         subListRecyclerView.adapter = adapter
     }
 
     private inner class SubHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val nameTextView : TextView = itemView.findViewById(R.id.sub_name);
-        val costTextView : TextView = itemView.findViewById(R.id.sub_cost);
-        val typeTextView : TextView = itemView.findViewById(R.id.sub_type);
-        val importanceTextView : TextView = itemView.findViewById(R.id.sub_importance);
-        val dueDateTextView : TextView = itemView.findViewById(R.id.sub_duedate);
+        val nameTextView: TextView = itemView.findViewById(R.id.sub_name);
+        val costTextView: TextView = itemView.findViewById(R.id.sub_cost);
+        val typeTextView: TextView = itemView.findViewById(R.id.sub_type);
+        val importanceTextView: TextView = itemView.findViewById(R.id.sub_importance);
+        val dueDateTextView: TextView = itemView.findViewById(R.id.sub_duedate);
     }
 
-    private inner class SubAdapter(var subs: List<Subscription>) : RecyclerView.Adapter<SubHolder>() {
+    private inner class SubAdapter(var subs: List<Subscription>) :
+        RecyclerView.Adapter<SubHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubHolder {
             val view = layoutInflater.inflate(R.layout.list_item_sub, parent, false)
             return SubHolder(view)
@@ -65,7 +75,6 @@ class SubListFragment : Fragment() {
         }
 
         override fun getItemCount() = subs.size
-
     }
 
     companion object {

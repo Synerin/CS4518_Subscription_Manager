@@ -41,7 +41,8 @@ class MainActivity : AppCompatActivity() {
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.menu_edit_payments -> {
-                    title = "Edit Payments"
+                    title = "Add/Edit Payments"
+                    loadFragment(AddPaymentFragment.newInstance())
                     return@setOnNavigationItemSelectedListener true
                 }
                 else -> false
