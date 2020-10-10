@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.menu_payments_breakdown -> {
                     title = "Payments Breakdown"
+                    loadFragment(BreakdownFragment.newInstance())
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.menu_home -> {
