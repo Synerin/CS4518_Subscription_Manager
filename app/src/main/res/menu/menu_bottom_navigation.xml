@@ -22,7 +22,7 @@
         />
 
     <item android:id="@+id/menu_edit_payments"
-        android:title="Edit Payments"
+        android:title="Add/Edit Payments"
         android:icon="@drawable/edit_icon"
         />
 
