@@ -23,13 +23,19 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/monthly_total_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/monthly_total"
         android:layout_gravity="center"
-        android:gravity="center"
         android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/monthly_total_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$0.00"
+        android:layout_gravity="center"
+        android:textSize="40sp"/>
 
     <LinearLayout
         android:orientation="vertical"
