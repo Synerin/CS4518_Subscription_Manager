@@ -5,14 +5,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+
+private const val TAG = "SubListFragment"
 
 class SubListFragment : Fragment() {
     private lateinit var subListRecyclerView: RecyclerView
@@ -40,9 +41,14 @@ class SubListFragment : Fragment() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                if(dataSnapshot.exists()){
-                    for(item in dataSnapshot.children) {
+                Log.d(TAG, "onDataChanged Called")
+
+                subList.clear()
+
+                if (dataSnapshot.exists()) {
+                    for (item in dataSnapshot.children) {
                         val retrieveSub = item.getValue(Subscription::class.java)
+
                         if (retrieveSub != null) {
                             subList.add(retrieveSub)
                         }
@@ -58,6 +64,27 @@ class SubListFragment : Fragment() {
             }
         })
 
+        myRef.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {}
+            override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {}
+
+            override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                val removedBook: Subscription? = dataSnapshot.getValue(Subscription::class.java)
+                for (i in 0 until subList.size) {
+                    if (removedBook != null) {
+                        if (subList[i].uniqueId == removedBook.uniqueId) {
+                            subList.removeAt(i)
+                            subListRecyclerView.adapter?.notifyItemRemoved(i)
+                            break
+                        }
+                    }
+                }
+            }
+
+            override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {}
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
+
         return view
     }
 
@@ -67,13 +94,19 @@ class SubListFragment : Fragment() {
         val typeTextView: TextView = itemView.findViewById(R.id.sub_type);
         val importanceTextView: TextView = itemView.findViewById(R.id.sub_importance);
         val dueDateTextView: TextView = itemView.findViewById(R.id.sub_duedate);
+        val deleteButton: Button = itemView.findViewById(R.id.deleteSub)
 
         fun bind(sub: Subscription) {
             nameTextView.text = sub.subName
             costTextView.text = "${sub.subCost}/${sub.subFrequency}"
-            typeTextView.text = "Type: ${sub.subType}"
+            typeTextView.text = "${sub.subType}"
             importanceTextView.text = sub.subImportance
             dueDateTextView.text = sub.subDueDate
+
+            deleteButton.setOnClickListener {
+                myRef.child(sub.uniqueId).removeValue()
+                subListRecyclerView.adapter?.notifyDataSetChanged()
+            }
         }
     }
 
