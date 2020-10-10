@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/addPayTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
+        android:textSize="25sp"
+        android:text="Tell Us About Your Subscription" />
+
+    <EditText
+        android:id="@+id/editTextSubName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/addPayTitle"
+        app:layout_constraintTop_toBottomOf="@+id/addPayTitle"
+        android:layout_marginTop="35dp"
+        android:layout_marginStart="20dp"
+        android:ems="13"
+        android:hint="What are you paying for?" />
+
+    <EditText
+        android:id="@+id/editTextSubCost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/editTextSubName"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSubName"
+        android:layout_marginTop="20dp"
+        android:ems="13"
+        android:inputType="numberDecimal"
+        android:hint="How much does it cost?" />
+
+    <EditText
+        android:id="@+id/editTextSubDueDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/editTextSubCost"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSubCost"
+        android:focusable="false"
+        android:layout_marginTop="20dp"
+        android:ems="13"
+        android:hint="When is it due next?" />
+
+    <TextView
+        android:id="@+id/frequencyLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/editTextSubDueDate"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSubDueDate"
+        android:layout_marginTop="30dp"
+        android:textSize="18sp"
+        android:text="How often does it occur?" />
+
+    <Spinner
+        android:id="@+id/frequencySpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/frequencyLabel"
+        app:layout_constraintTop_toBottomOf="@+id/frequencyLabel"
+        android:spinnerMode="dropdown"
+        android:entries="@array/frequencies"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/importanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/frequencySpinner"
+        app:layout_constraintTop_toBottomOf="@+id/frequencySpinner"
+        android:layout_marginTop="30dp"
+        android:textSize="18sp"
+        android:text="How important is it?" />
+
+    <Spinner
+        android:id="@+id/importanceSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/importanceLabel"
+        app:layout_constraintTop_toBottomOf="@+id/importanceLabel"
+        android:spinnerMode="dropdown"
+        android:entries="@array/importance"
+        android:layout_marginTop="10dp" />
+
+    <EditText
+        android:id="@+id/editTextSubType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/importanceSpinner"
+        app:layout_constraintTop_toBottomOf="@+id/importanceSpinner"
+        android:layout_marginTop="30dp"
+        android:ems="13"
+        android:hint="What label would you give it?" />
+
+    <Button
+        android:id="@+id/buttonSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/editTextSubType"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSubType"
+        android:layout_marginTop="30dp"
+        android:text="Submit" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

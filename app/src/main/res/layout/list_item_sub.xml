@@ -20,11 +20,17 @@
             android:text="Netflix"
             android:textSize="20sp" />
 
+        <Button
+            android:id="@+id/deleteSub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete" />
+
         <TextView
             android:id="@+id/sub_cost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:gravity="end"
             android:text="$4.99/month"
             android:textSize="16sp" />
@@ -72,12 +78,12 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Visit Website" />
+<!--    <Button-->
+<!--        android:id="@+id/button"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="4dp"-->
+<!--        android:text="Visit Website" />-->
 
 
 </LinearLayout>

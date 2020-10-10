@@ -7,4 +7,16 @@
     <string name="expense_1">Expense Type 1</string>
     <string name="expense_2">Expense Type 2</string>
     <string name="expense_3">Expense Type 3</string>
+
+    <string-array name="frequencies">
+        <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Yearly</item>
+    </string-array>
+
+    <string-array name="importance">
+        <item>!</item>
+        <item>!!</item>
+        <item>!!!</item>
+    </string-array>
 </resources>
