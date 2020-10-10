@@ -1,6 +1,7 @@
 package com.example.subscriptionmanager
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,16 +11,14 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
 class SubListFragment : Fragment() {
     private lateinit var subListRecyclerView: RecyclerView
-    private var adapter: SubAdapter? = null
-
-    private val subListViewModel: SubListViewModel by lazy {
-        ViewModelProviders.of(this).get(SubListViewModel::class.java)
-    }
+    private lateinit var firedatabase : FirebaseDatabase
+    private lateinit var myRef : DatabaseReference
+    private lateinit var subList : ArrayList<Subscription>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,24 +27,38 @@ class SubListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_sub_list, container, false)
 
+        firedatabase = FirebaseDatabase.getInstance()
         subListRecyclerView = view.findViewById(R.id.sub_recycler_view) as RecyclerView
         subListRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        updateUI()
+        subList = arrayListOf<Subscription>()
+
+        val userID = FirebaseAuth.getInstance().currentUser?.uid
+        myRef = userID?.let { FirebaseDatabase.getInstance().getReference(it) }!!
+
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                if(dataSnapshot.exists()){
+                    for(item in dataSnapshot.children) {
+                        val retrieveSub = item.getValue(Subscription::class.java)
+                        if (retrieveSub != null) {
+                            subList.add(retrieveSub)
+                        }
+                    }
+
+                    val adapter = SubAdapter(subList)
+                    subListRecyclerView.adapter = adapter
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+            }
+        })
 
         return view
-    }
-
-    private fun updateUI() {
-        val query: Query = FirebaseDatabase.getInstance().getReference("kids")
-
-        val options: FirebaseRecyclerOptions<Subscription> = FirebaseRecyclerOptions.Builder<Subscription>()
-            .setQuery(query, Subscription::class.java)
-            .build()
-
-        val subs = subListViewModel.subs
-        adapter = SubAdapter(subs)
-        subListRecyclerView.adapter = adapter
     }
 
     private inner class SubHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -54,9 +67,17 @@ class SubListFragment : Fragment() {
         val typeTextView: TextView = itemView.findViewById(R.id.sub_type);
         val importanceTextView: TextView = itemView.findViewById(R.id.sub_importance);
         val dueDateTextView: TextView = itemView.findViewById(R.id.sub_duedate);
+
+        fun bind(sub: Subscription) {
+            nameTextView.text = sub.subName
+            costTextView.text = "${sub.subCost}/${sub.subFrequency}"
+            typeTextView.text = "Type: ${sub.subType}"
+            importanceTextView.text = sub.subImportance
+            dueDateTextView.text = sub.subDueDate
+        }
     }
 
-    private inner class SubAdapter(var subs: List<Subscription>) :
+    private inner class SubAdapter(var subs: ArrayList<Subscription>) :
         RecyclerView.Adapter<SubHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubHolder {
             val view = layoutInflater.inflate(R.layout.list_item_sub, parent, false)
@@ -64,14 +85,7 @@ class SubListFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: SubHolder, position: Int) {
-            val sub = subs[position]
-            holder.apply {
-                nameTextView.text = sub.subName
-                costTextView.text = "${sub.subCost}/${sub.subFrequency}"
-                typeTextView.text = "Type: ${sub.subType}"
-                importanceTextView.text = sub.subImportance
-                dueDateTextView.text = sub.subDueDate
-            }
+            holder.bind(subs[position])
         }
 
         override fun getItemCount() = subs.size
