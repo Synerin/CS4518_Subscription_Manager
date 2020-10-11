@@ -95,4 +95,9 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
         bottomNav.selectedItemId = R.id.menu_edit_payments
         loadFragment(AddPaymentFragment.newInstance(subID))
     }
+
+    override fun onAddSelected() {
+        bottomNav.selectedItemId = R.id.menu_edit_payments
+        loadFragment(AddPaymentFragment())
+    }
 }

@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.fragment_sub_list.*
 
 
 private const val TAG = "SubListFragment"
@@ -24,6 +26,7 @@ class SubListFragment : Fragment(){
 
     interface Callbacks {
         fun onSubSelected(subID: String);
+        fun onAddSelected()
     }
 
     private var callbacks: Callbacks? = null
@@ -31,6 +34,7 @@ class SubListFragment : Fragment(){
     private lateinit var subListRecyclerView: RecyclerView
     private lateinit var myRef: DatabaseReference
     private lateinit var subList: ArrayList<Subscription>
+    private lateinit var addSubButton: Button
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -51,6 +55,7 @@ class SubListFragment : Fragment(){
     ): View? {
         val view = inflater.inflate(R.layout.fragment_sub_list, container, false)
 
+        addSubButton = view.findViewById(R.id.add_sub_button)
         subListRecyclerView = view.findViewById(R.id.sub_recycler_view) as RecyclerView
         subListRecyclerView.layoutManager = LinearLayoutManager(context)
 
@@ -104,6 +109,10 @@ class SubListFragment : Fragment(){
             override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {}
             override fun onCancelled(databaseError: DatabaseError) {}
         })
+
+        addSubButton.setOnClickListener {
+            callbacks?.onAddSelected()
+        }
 
         setUpSwipe()
 
