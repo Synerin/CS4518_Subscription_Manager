@@ -99,6 +99,15 @@
         android:hint="What label would you give it?" />
 
     <Button
+        android:id="@+id/buttonClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/editTextSubType"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSubType"
+        android:layout_marginTop="30dp"
+        android:text="Clear" />
+
+    <Button
         android:id="@+id/buttonSubmit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -20,12 +20,6 @@
             android:text="Netflix"
             android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/deleteSub"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Delete" />
-
         <TextView
             android:id="@+id/sub_cost"
             android:layout_width="match_parent"
