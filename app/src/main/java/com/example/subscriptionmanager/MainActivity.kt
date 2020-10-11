@@ -7,12 +7,13 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 
 private const val TAG = "MainActivity"
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -89,4 +90,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {}
+
+    override fun onSubSelected(subID: String) {
+        bottomNav.selectedItemId = R.id.menu_edit_payments
+        loadFragment(AddPaymentFragment.newInstance(subID))
+    }
+
+    override fun onAddSelected() {
+        bottomNav.selectedItemId = R.id.menu_edit_payments
+        loadFragment(AddPaymentFragment())
+    }
 }
