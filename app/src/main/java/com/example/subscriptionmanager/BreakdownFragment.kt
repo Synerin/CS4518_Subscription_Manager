@@ -8,16 +8,17 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import java.text.DecimalFormat
 import java.text.NumberFormat
+
 
 class BreakdownFragment: Fragment() {
     private lateinit var firedatabase: FirebaseDatabase
     private lateinit var monthlySpending: TextView
     private lateinit var expensesList: ListView
     private lateinit var myRef : DatabaseReference
+    private var monthlyTotal: Double = 0.0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,21 +33,37 @@ class BreakdownFragment: Fragment() {
         val userID = FirebaseAuth.getInstance().currentUser?.uid
         myRef = userID?.let { FirebaseDatabase.getInstance().getReference(it) }!!
 
-        calculateMonthly()
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                if(dataSnapshot.exists()) {
+                    for(user in dataSnapshot.children) {
+                        val sub = user.getValue(Subscription::class.java)
+
+                        if(sub != null) {
+                            calculateMonthly(sub.subCost)
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
 
         return view
     }
 
-    private fun calculateMonthly() {
-        var spending: Double = 0.0
-
-        spending += 5000
+    private fun calculateMonthly(subCost: String) {
+        //monthlyTotal += subCost
         // TODO: Actually calculate monthly spending
 
-        val formatter: NumberFormat = DecimalFormat("#,###")
-        val formattedSpending: String = formatter.format(spending)
+        //val formatter: NumberFormat = DecimalFormat("#,###")
+        //val formattedSpending: String = formatter.format(monthlyTotal)
 
-        monthlySpending.text = "$${formattedSpending}"
+        monthlySpending.text = "$$subCost"//"$${formattedSpending}"
     }
 
     companion object {
