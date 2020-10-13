@@ -132,7 +132,7 @@ class AddPaymentFragment : Fragment() {
     private fun addSubscription() {
         val sub = Subscription();
         sub.subName = editTextSubName.text.toString()
-        sub.subCost = editTextSubCost.text.toString()
+        sub.subCost = editTextSubCost.text.toString().substring(1)
         sub.subDueDate = editTextSubDueDate.text.toString()
         sub.subFrequency = frequencySpinner.selectedItem.toString()
         sub.subImportance = importanceSpinner.selectedItem.toString()
