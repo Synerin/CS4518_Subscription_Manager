@@ -130,7 +130,7 @@ class SubListFragment : Fragment(){
 
         fun bind(sub: Subscription) {
             nameTextView.text = sub.subName
-            costTextView.text = "${sub.subCost}/${sub.subFrequency}"
+            costTextView.text = "$${sub.subCost}/${sub.subFrequency}"
             typeTextView.text = "${sub.subType}"
             importanceTextView.text = sub.subImportance
             dueDateTextView.text = sub.subDueDate
