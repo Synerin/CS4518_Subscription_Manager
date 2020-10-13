@@ -9,8 +9,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import java.text.DecimalFormat
-import java.text.NumberFormat
 
 
 class BreakdownFragment: Fragment() {
@@ -42,7 +40,7 @@ class BreakdownFragment: Fragment() {
                         val sub = user.getValue(Subscription::class.java)
 
                         if(sub != null) {
-                            calculateMonthly(sub.subCost)
+                            calculateMonthly(sub.subCost, sub.subFrequency)
                         }
                     }
                 }
@@ -56,13 +54,27 @@ class BreakdownFragment: Fragment() {
         return view
     }
 
-    private fun calculateMonthly(subCost: String) {
-        monthlyTotal += subCost.replace(",", "").toDouble()
+    /**
+     * Calculate the monthly expense for a given subscription, adding to the monthlyTotal
+     *
+     * @param subCost The cost of the subscription
+     * @param subFrequency The frequency of the subscription, either Weekly, Monthly, or Yearly
+     * @return Nothing, but add the calculated monthly cost to the monthlyTotal
+     */
+    private fun calculateMonthly(subCost: String, subFrequency: String) {
+        val costMultiplier = when(subFrequency) {
+            "Weekly" -> 4.0
+            "Monthly" -> 1.0
+            else -> 1.0 / 12.0
+        }
 
-        val formatter: NumberFormat = DecimalFormat("#,###")
-        val formattedSpending: String = formatter.format(monthlyTotal)
+        // Calculate monthly cost based on subscription cost and subscription frequency
+        monthlyTotal += subCost.replace(",", "").toDouble() * costMultiplier
 
-        monthlySpending.text = "$${formattedSpending}"
+        // Format string to monetary units, e.g. 1234.5 => 1,234.50
+        val textTotal = String.format("%,.2f", monthlyTotal)
+
+        monthlySpending.text = "$${textTotal}"
     }
 
     companion object {
