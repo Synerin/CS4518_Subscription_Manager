@@ -57,13 +57,12 @@ class BreakdownFragment: Fragment() {
     }
 
     private fun calculateMonthly(subCost: String) {
-        //monthlyTotal += subCost
-        // TODO: Actually calculate monthly spending
+        monthlyTotal += subCost.replace(",", "").toDouble()
 
-        //val formatter: NumberFormat = DecimalFormat("#,###")
-        //val formattedSpending: String = formatter.format(monthlyTotal)
+        val formatter: NumberFormat = DecimalFormat("#,###")
+        val formattedSpending: String = formatter.format(monthlyTotal)
 
-        monthlySpending.text = "$$subCost"//"$${formattedSpending}"
+        monthlySpending.text = "$${formattedSpending}"
     }
 
     companion object {
