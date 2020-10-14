@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Subscription Manager</string>
 
+    <string name="budgetReached">You Have Not Set a Monthly Budget</string>
+    <string name="upcomingExpenses">Upcoming Expenses</string>
+
     <string-array name="frequencies">
         <item>Weekly</item>
         <item>Monthly</item>
