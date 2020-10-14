@@ -42,19 +42,31 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_marginHorizontal="25dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="75dp"
             android:text="@string/top_expenses"
-            android:textSize="28sp"/>
+            android:textSize="32sp"/>
 
-        <ListView
-            android:id="@+id/expense_list"
+        <TextView
+            android:id="@+id/expense_one"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textSize="28sp"/>
+        <TextView
+            android:id="@+id/expense_two"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="28sp"/>
+        <TextView
+            android:id="@+id/expense_three"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="28sp"/>
 
     </LinearLayout>
 
