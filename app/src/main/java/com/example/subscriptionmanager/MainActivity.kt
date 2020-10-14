@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
                 }
                 R.id.menu_home -> {
                     title = "Subscription Manager"
+                    loadFragment(HomeFragment.newInstance())
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.menu_view_payments -> {
