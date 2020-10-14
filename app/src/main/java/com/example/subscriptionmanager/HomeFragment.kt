@@ -71,7 +71,9 @@ class HomeFragment: Fragment() {
         subList.sortBy { timeFromNow(it.subDueDate) }
 
         // TODO: Fix
-        soonestExpenseOne.text = "${subList[0].subName} on ${subList[0].subDueDate}"
+        soonestExpenseOne.text = "${subList[0].subName} due on ${subList[0].subDueDate}"
+        soonestExpenseTwo.text = "${subList[1].subName} due on ${subList[1].subDueDate}"
+        soonestExpenseThree.text = "${subList[2].subName} due on ${subList[2].subDueDate}"
         // TODO: Calculate next possible due date for each subscription
     }
 
