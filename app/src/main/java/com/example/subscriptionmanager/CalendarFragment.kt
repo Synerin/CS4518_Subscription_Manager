@@ -109,6 +109,9 @@ class CalendarFragment: Fragment(){
     private fun updateList(){
     }
 
-
-
+    companion object {
+        fun newInstance(): CalendarFragment {
+            return CalendarFragment()
+        }
+    }
 }
