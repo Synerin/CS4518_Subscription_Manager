@@ -84,15 +84,15 @@ class SubListFragment : Fragment(){
                 }
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
 
         myRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {}
             override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {}
 
+            // Used to ensure that the UI will be updated on the
+            // removal off an item from the database
             override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                 val removedBook: Subscription? = dataSnapshot.getValue(Subscription::class.java)
                 for (i in 0 until subList.size) {
@@ -110,6 +110,7 @@ class SubListFragment : Fragment(){
             override fun onCancelled(databaseError: DatabaseError) {}
         })
 
+        // Triggers the Fragment to change to the Add Payment tab
         addSubButton.setOnClickListener {
             callbacks?.onAddSelected()
         }
@@ -119,6 +120,9 @@ class SubListFragment : Fragment(){
         return view
     }
 
+    /**
+     * Holder for RecyclerView
+     */
     private inner class SubHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nameTextView: TextView = itemView.findViewById(R.id.sub_name);
         val costTextView: TextView = itemView.findViewById(R.id.sub_cost);
@@ -128,6 +132,7 @@ class SubListFragment : Fragment(){
 
         lateinit var subID: String
 
+        // Sets SubscriptionFragment TextView values
         fun bind(sub: Subscription) {
             nameTextView.text = sub.subName
             costTextView.text = "$${sub.subCost}/${sub.subFrequency}"
@@ -138,6 +143,9 @@ class SubListFragment : Fragment(){
         }
     }
 
+    /**
+     * Adapter for RecyclerView
+     */
     private inner class SubAdapter(var subs: ArrayList<Subscription>) :
         RecyclerView.Adapter<SubHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubHolder {
@@ -152,7 +160,11 @@ class SubListFragment : Fragment(){
         override fun getItemCount() = subs.size
     }
 
+    /**
+     * Used to set up left and right swipe actions for edit and delete
+     */
     private fun setUpSwipe() {
+        // Delete swipe callback
         val swipeDeleteCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -160,11 +172,13 @@ class SubListFragment : Fragment(){
                 target: RecyclerView.ViewHolder
             ): Boolean = false
 
+            // On Swipe delete matching subscription from database and update RecyclerView
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 myRef.child(subList[viewHolder.adapterPosition].uniqueId).removeValue()
                 subListRecyclerView.adapter?.notifyDataSetChanged()
             }
 
+            // Used to set background color and icon for swipe functionality
             override fun onChildDraw(
                 c: Canvas,
                 recyclerView: RecyclerView,
@@ -174,29 +188,39 @@ class SubListFragment : Fragment(){
                 actionState: Int,
                 isCurrentlyActive: Boolean
             ) {
+                // Set variable to reference delete icon resource
                 val deleteIcon = resources.getDrawable(
                     R.drawable.delete_icon,
                     null
                 )
 
+                // Gets the dimensions of users screen for relative layout management
                 val display = activity!!.windowManager.defaultDisplay
 
+                // Create rectangle which will be used for the slide animation.  Rectangle size
+                // is dynamically set based on the current location of the subscription fragment
+                // being manipulated
                 c.clipRect(
                     display.width.toFloat() + dX, viewHolder.itemView.top.toFloat(),
                     display.width.toFloat(), viewHolder.itemView.bottom.toFloat()
                 )
 
+                // If current subscription fragment being manipulated has been slid more
+                // than halfway across the screen, set slide animation color to red, otherwise
+                // if it is less than halfway, set slide animation color to gray
                 if(-dX < display.width / 2)
                     c.drawColor(Color.GRAY)
                 else
                     c.drawColor(Color.RED)
 
+                // Used to calculate relative location of slide animation icon
                 val offset = 60
                 val top = viewHolder.itemView.top + offset
                 val bottom = viewHolder.itemView.bottom - offset
                 val right = display.width - 100
                 val left = right - (bottom - top)
 
+                // Given above dimensions, define bounding rectangle to place it on screen
                 deleteIcon.bounds = Rect(
                     left,
                     top,
@@ -204,6 +228,7 @@ class SubListFragment : Fragment(){
                     bottom
                 )
 
+                // Draw delete icon
                 deleteIcon.draw(c)
 
                 super.onChildDraw(
@@ -214,6 +239,7 @@ class SubListFragment : Fragment(){
 
         }
 
+        // Edit swipe callback
         val swipeEditCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -221,10 +247,13 @@ class SubListFragment : Fragment(){
                 target: RecyclerView.ViewHolder
             ): Boolean = false
 
+            // On Swipe, switch to Edit Subscription tab, and pass in the unique ID of the swiped
+            // subscription to get reference to subscription and fill in relevant fields
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 callbacks?.onSubSelected(subList[viewHolder.adapterPosition].uniqueId);
             }
 
+            // Used to set background color and icon for swipe functionality
             override fun onChildDraw(
                 c: Canvas,
                 recyclerView: RecyclerView,
@@ -234,29 +263,40 @@ class SubListFragment : Fragment(){
                 actionState: Int,
                 isCurrentlyActive: Boolean
             ) {
+                // Set variable to reference edit icon resource
                 val editIcon = resources.getDrawable(
                     R.drawable.edit_icon,
                     null
                 )
 
+                // Gets the dimensions of users screen for relative layout management
                 val display = activity!!.windowManager.defaultDisplay
 
+                // Create rectangle which will be used for the slide animation.  Rectangle size
+                // is dynamically set based on the current location of the subscription fragment
+                // being manipulated
                 c.clipRect(
                     0f, viewHolder.itemView.top.toFloat(),
                     dX, viewHolder.itemView.bottom.toFloat()
                 )
 
+                // If current subscription fragment being manipulated has been slid more
+                // than halfway across the screen, set slide animation color to yellow(ish),
+                // otherwise if it is less than halfway, set slide animation color to gray.
+                // The yellow color used is borrowed from Outlooks UI
                 if(dX < display.width / 2)
                     c.drawColor(Color.GRAY)
                 else
                     c.drawColor(Color.rgb(234, 181, 15))
 
+                // Used to calculate relative location of slide animation icon
                 val offset = 60
                 val top = viewHolder.itemView.top + offset
                 val bottom = viewHolder.itemView.bottom - offset
                 val left = 100
                 val right = left + bottom - top
 
+                // Given above dimensions, define bounding rectangle to place it on screen
                 editIcon.bounds = Rect(
                     left,
                     top,
@@ -264,6 +304,7 @@ class SubListFragment : Fragment(){
                     bottom
                 )
 
+                // Draw edit icon
                 editIcon.draw(c)
 
                 super.onChildDraw(
@@ -274,6 +315,7 @@ class SubListFragment : Fragment(){
 
         }
 
+        // Attach ItemTouchHelper to RecyclerView
         val swipeEditHelper = ItemTouchHelper(swipeEditCallback)
         swipeEditHelper.attachToRecyclerView(subListRecyclerView)
         val swipeDeleteHelper = ItemTouchHelper(swipeDeleteCallback)
