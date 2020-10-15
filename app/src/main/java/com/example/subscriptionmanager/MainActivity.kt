@@ -20,8 +20,6 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
 
         handleSignIn();
 
-        bottomNav.selectedItemId = R.id.menu_home
-
         bottomNav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.menu_calender -> {
@@ -34,6 +32,7 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
                 }
                 R.id.menu_home -> {
                     title = "Subscription Manager"
+                    loadFragment(HomeFragment.newInstance())
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.menu_view_payments -> {
@@ -49,6 +48,8 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
                 else -> false
             }
         }
+
+        bottomNav.selectedItemId = R.id.menu_home
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
