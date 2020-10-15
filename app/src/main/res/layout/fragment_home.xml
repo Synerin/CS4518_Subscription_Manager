@@ -70,14 +70,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="2nd soonest expense (Date)"
-            android:textSize="18sp" />
+            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/soonest_expense_three_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="3rd soonest expense (Date)"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
 
     </LinearLayout>
 
