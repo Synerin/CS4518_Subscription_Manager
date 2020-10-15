@@ -21,8 +21,10 @@
         <item>@string/alphabetically</item>
     </string-array>
 
-    <string name="budget_breakdown">Budget Breakdown</string>
-    <string name="weekly_total">Total Weekly Spending</string>
+    <string name="judgment">Your Subscriptions Are Costing You ... </string>
+    <string name="annual_total">Annually</string>
+    <string name="monthly_total">Monthly</string>
+    <string name="weekly_total">Weekly</string>
     <string name="top_expenses">Your Top Expenses</string>
     <string name="expense_1">Expense Type 1</string>
     <string name="expense_2">Expense Type 2</string>
