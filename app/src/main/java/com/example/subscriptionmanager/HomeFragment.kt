@@ -229,10 +229,10 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
                 subList.sortBy { timeFromNow(it.subDueDate) }
             }
             resources.getString(R.string.cost_low_high) -> {
-                subList.sortBy { it.subCost } // TODO: Make this one not stupid
+                subList.sortBy { it.subCost.toDouble() }
             }
             resources.getString(R.string.cost_high_low) -> {
-                subList.sortByDescending { it.subCost } // TODO: This one too
+                subList.sortByDescending { it.subCost.toDouble() }
             }
             resources.getString(R.string.importance) -> {
                 subList.sortByDescending { it.subImportance }
