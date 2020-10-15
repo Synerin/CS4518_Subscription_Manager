@@ -1,6 +1,26 @@
 <resources>
     <string name="app_name">Subscription Manager</string>
 
+    <string name="budgetReached">You Have Not Set a Monthly Budget</string>
+    <string name="upcomingExpenses">Upcoming Expenses:</string>
+    <string name="moneyStandIn">$x.xx</string>
+    <string name="dueInMonth">Due by End of Month</string>
+    <string name="comingUpSoon">Coming Up Soon</string>
+
+    <string name="due_date">Due Date</string>
+    <string name="cost_low_high">Cost (Low - High)</string>
+    <string name="cost_high_low">Cost (High - Low)</string>
+    <string name="importance">Importance</string>
+    <string name="alphabetically">Alphabetically</string>
+
+    <string-array name="filters">
+        <item>@string/due_date</item>
+        <item>@string/cost_low_high</item>
+        <item>@string/cost_high_low</item>
+        <item>@string/importance</item>
+        <item>@string/alphabetically</item>
+    </string-array>
+
     <string name="budget_breakdown">Budget Breakdown</string>
     <string name="monthly_total">Total Monthly Spending</string>
     <string name="top_expenses">Your Top Expenses</string>
