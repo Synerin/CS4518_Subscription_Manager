@@ -54,19 +54,23 @@ class CalendarFragment: Fragment(){
 
     override fun onStart() {
         super.onStart()
-        calendarView.setOnDateChangeListener{
-                view, year, month, dayOfMonth ->
-            calendar.set(year, month, dayOfMonth)
-            calendarView.date = calendar.timeInMillis
-            val dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM)
-            editTextDate.append(dateFormatter.format(calendar.time))
+        calendarView.apply{
+            setOnDateChangeListener { view, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                calendarView.date = calendar.timeInMillis
+                val dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM)
+                editTextDate.append(dateFormatter.format(calendar.time))
+            }
         }
 
-        dateSelected.setOnClickListener {
-            val selectedDate:Long = calendarView.date
-            calendar.timeInMillis = selectedDate
-            val dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM)
-            editTextDate.append(dateFormatter.format(calendar.time))
+        dateSelected.apply {
+            setOnClickListener{
+                val selectedDate:Long = calendarView.date
+                calendar.timeInMillis = selectedDate
+                val dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM)
+                editTextDate.append(dateFormatter.format(calendar.time))
+            }
+
         }
 
     }
