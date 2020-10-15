@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="40dp">
+
+        <TextView
+            android:id="@+id/upcoming_expenses_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="48dp"
+            android:text="@string/upcomingExpenses"
+            android:textSize="36sp" />
+
+        <TextView
+            android:id="@+id/upcoming_expenses_value_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/moneyStandIn"
+            android:textSize="36sp"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/end_of_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dueInMonth"
+            android:textSize="36sp"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="36dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/comingUpSoon"
+            android:textSize="24dp"/>
+
+        <TextView
+            android:id="@+id/soonest_expense_one_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Soonest expense"
+            android:textSize="24dp" />
+
+        <TextView
+            android:id="@+id/soonest_expense_two_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2nd soonest expense"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/soonest_expense_three_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="3rd soonest expense"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Spinner
+            android:id="@+id/filter_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter Payments"
+            android:textSize="24sp"
+            android:layout_marginTop="30dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/filtered_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</LinearLayout>

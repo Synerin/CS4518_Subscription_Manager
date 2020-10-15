@@ -23,8 +23,6 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
         // without signing in or signing up first
         handleSignIn();
 
-        bottomNav.selectedItemId = R.id.menu_home
-
         // Controls Bottom Navigation menu navigation, and triggers fragment
         // changes based on interaction with tabs
         bottomNav.setOnNavigationItemSelectedListener {
@@ -39,6 +37,7 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
                 }
                 R.id.menu_home -> {
                     title = "Subscription Manager"
+                    loadFragment(HomeFragment.newInstance())
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.menu_view_payments -> {
@@ -54,6 +53,8 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
                 else -> false
             }
         }
+
+        bottomNav.selectedItemId = R.id.menu_home
     }
 
     /**
