@@ -4,24 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.fragment_sub_list.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 private const val TAG = "HomeFragment"
 class HomeFragment: Fragment() {
     private lateinit var firedatabase: FirebaseDatabase
-    private lateinit var budgetTextView: TextView
-    private lateinit var budgetBar: ProgressBar
     private lateinit var upcomingExpenses: TextView
+    private lateinit var endOfMonth: TextView
     private lateinit var soonestExpenseOne: TextView
     private lateinit var soonestExpenseTwo: TextView
     private lateinit var soonestExpenseThree: TextView
-    private lateinit var filteredList: ListView
+    private lateinit var filterSpinner: Spinner
+    private lateinit var filteredList: RecyclerView
     private var subList: MutableList<Subscription> = mutableListOf()
 
     private lateinit var myRef: DatabaseReference
@@ -33,13 +36,16 @@ class HomeFragment: Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        budgetTextView = view.findViewById(R.id.budget_percentage_text_view)
-        budgetBar = view.findViewById(R.id.budget_bar)
         upcomingExpenses = view.findViewById(R.id.upcoming_expenses_value_text_view)
+        endOfMonth = view.findViewById(R.id.end_of_month)
         soonestExpenseOne = view.findViewById(R.id.soonest_expense_one_text_view)
         soonestExpenseTwo = view.findViewById(R.id.soonest_expense_two_text_view)
         soonestExpenseThree = view.findViewById(R.id.soonest_expense_three_text_view)
-        filteredList = view.findViewById(R.id.filtered_list_view)
+
+        filterSpinner = view.findViewById(R.id.filter_spinner)
+        filteredList = view.findViewById(R.id.filtered_list_view) as RecyclerView
+        filteredList.layoutManager = LinearLayoutManager(context)
+
         firedatabase = FirebaseDatabase.getInstance()
         val userID = FirebaseAuth.getInstance().currentUser?.uid
         myRef = userID?.let { FirebaseDatabase.getInstance().getReference(it) }!!
@@ -56,6 +62,21 @@ class HomeFragment: Fragment() {
                     }
                     updateSoonest()
                     updateUpcoming()
+
+                    val adapter = SubAdapter(subList)
+                    filteredList.adapter = adapter
+
+                    context?.let {
+                        ArrayAdapter.createFromResource(
+                            it,
+                            R.array.filters,
+                            android.R.layout.simple_spinner_item
+                        ).also { filterAdapter ->
+                            filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                            filterSpinner.adapter = filterAdapter
+                        }
+                    }
+
                 }
             }
 
@@ -81,7 +102,15 @@ class HomeFragment: Fragment() {
             if(m == month && day < d) expenses += sub.subCost.toDouble()
         }
 
+        var ordinal: String
+        ordinal = when (month) {
+            1, 3, 5, 6, 8, 10, 12 -> "31st"
+            2 -> "28th" // Leap years ehhhhhh
+            else -> "30th"
+        }
+
         upcomingExpenses.text = "$$expenses" // TODO: Format string so cents are accurately represented
+        endOfMonth.text = "Due by ${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())} $ordinal"
     }
 
     private fun updateSoonest() {
@@ -106,7 +135,6 @@ class HomeFragment: Fragment() {
             due = getNextDue(subList[2].subDueDate, subList[2].subFrequency)
             soonestExpenseThree.text = "$name due on $due"
         }
-        // TODO: Calculate next possible due date for each subscription
     }
 
     private fun timeFromNow(date: String): Double {
@@ -119,7 +147,7 @@ class HomeFragment: Fragment() {
 
         var result: Double = 0.0
 
-        // I can almost feel that this will cause edge case issues
+        // I can almost feel the edge case issues
         if(month <= givenMonth) {
             result += givenMonth - month
         } else {
@@ -184,6 +212,34 @@ class HomeFragment: Fragment() {
     companion object {
         fun newInstance(): HomeFragment {
             return HomeFragment()
+        }
+    }
+
+    private inner class SubHolder(view: View):
+        RecyclerView.ViewHolder(view) {
+        val miniSubName: TextView = itemView.findViewById(R.id.mini_sub_name)
+        val miniSubCost: TextView = itemView.findViewById(R.id.mini_sub_cost)
+        val miniSubDue: TextView = itemView.findViewById(R.id.mini_sub_due)
+
+        fun bind(sub: Subscription) {
+            miniSubName.text = sub.subName
+            miniSubCost.text = "$${sub.subCost}"
+            miniSubDue.text = sub.subDueDate
+        }
+    }
+
+    private inner class SubAdapter(var subs: List<Subscription>): RecyclerView.Adapter<SubHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubHolder {
+            val view = layoutInflater.inflate(R.layout.list_item_sub_mini, parent, false)
+            return SubHolder(view)
+        }
+
+        override fun getItemCount() = subs.size
+
+        override fun onBindViewHolder(holder: SubHolder, position: Int) {
+            val sub = subs[position]
+            holder.bind(sub)
         }
     }
 }
