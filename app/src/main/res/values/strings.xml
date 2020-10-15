@@ -22,7 +22,7 @@
     </string-array>
 
     <string name="budget_breakdown">Budget Breakdown</string>
-    <string name="monthly_total">Total Monthly Spending</string>
+    <string name="weekly_total">Total Weekly Spending</string>
     <string name="top_expenses">Your Top Expenses</string>
     <string name="expense_1">Expense Type 1</string>
     <string name="expense_2">Expense Type 2</string>

@@ -12,12 +12,12 @@ import com.google.firebase.database.*
 
 class BreakdownFragment: Fragment() {
     private lateinit var firedatabase: FirebaseDatabase
-    private lateinit var monthlySpending: TextView
+    private lateinit var weeklySpending: TextView
     private lateinit var expenseOne: TextView
     private lateinit var expenseTwo: TextView
     private lateinit var expenseThree: TextView
     private lateinit var myRef : DatabaseReference
-    private var monthlyTotal: Double = 0.0
+    private var weeklyTotal: Double = 0.0
     private var subList: MutableList<Subscription> = mutableListOf()
 
     override fun onCreateView(
@@ -27,7 +27,7 @@ class BreakdownFragment: Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_breakdown, container, false)
 
-        monthlySpending = view.findViewById(R.id.monthly_total_value)
+        weeklySpending = view.findViewById(R.id.monthly_total_value)
         expenseOne = view.findViewById(R.id.expense_one)
         expenseTwo = view.findViewById(R.id.expense_two)
         expenseThree = view.findViewById(R.id.expense_three)
@@ -44,7 +44,7 @@ class BreakdownFragment: Fragment() {
                         val sub = user.getValue(Subscription::class.java)
 
                         if(sub != null) {
-                            calculateMonthly(sub.subCost, sub.subFrequency)
+                            calculateWeekly(sub.subCost, sub.subFrequency)
                             subList.add(sub)
                         }
                     }
@@ -62,20 +62,20 @@ class BreakdownFragment: Fragment() {
     }
 
     /**
-     * Calculate the monthly expense for a given subscription, adding to the monthlyTotal
+     * Calculate the weekly expense for a given subscription, adding to the weeklyTotal
      *
      * @param subCost The cost of the subscription
      * @param subFrequency The frequency of the subscription, either Weekly, Monthly, or Yearly
-     * @return Nothing, but add the calculated monthly cost to the monthlyTotal
+     * @return Nothing, but add the calculated weekly cost to the weeklyTotal
      */
-    private fun calculateMonthly(subCost: String, subFrequency: String) {
+    private fun calculateWeekly(subCost: String, subFrequency: String) {
         // Calculate monthly cost based on subscription cost and subscription frequency
-        monthlyTotal += trueCost(costToDouble(subCost), subFrequency)
+        weeklyTotal += trueCost(costToDouble(subCost), subFrequency) * 7
 
         // Format string to monetary units, e.g. 1234.5 => 1,234.50
-        val textTotal = String.format("%,.2f", monthlyTotal)
+        val textTotal = String.format("%,.2f", weeklyTotal)
 
-        monthlySpending.text = "$${textTotal}"
+        weeklySpending.text = "$${textTotal}"
     }
 
     /**
@@ -85,6 +85,7 @@ class BreakdownFragment: Fragment() {
         val size: Int = subList.size
         var subscription: Subscription? = null
         var name: String? = null
+        var textTotal: String
 
         subList.sortByDescending { trueCost(costToDouble(it.subCost), it.subFrequency) }
 
@@ -92,19 +93,22 @@ class BreakdownFragment: Fragment() {
             subscription = subList[0]
             // 13 chars seems to be a reasonable maximum length given a textSize of 28sp
             name = if (subscription.subName.length > 13) "${subscription.subName.substring(0, 13)}..." else subscription.subName
-            expenseOne.text = "1. $name,\n\t\t\t$${subscription.subCost} ${subscription.subFrequency}"
+            textTotal = String.format("%,.2f", trueCost(costToDouble(subscription.subCost), subscription.subFrequency))
+            expenseOne.text = "1. $name,\n\t\t\t$$textTotal per Day"
         }
 
         if(size > 1) {
             subscription = subList[1]
             name = if (subscription.subName.length > 13) "${subscription.subName.substring(0, 13)}..." else subscription.subName
-            expenseTwo.text = "2. $name,\n\t\t\t$${subscription.subCost} ${subscription.subFrequency}"
+            textTotal = String.format("%,.2f", trueCost(costToDouble(subscription.subCost), subscription.subFrequency))
+            expenseTwo.text = "2. $name,\n\t\t\t$$textTotal per Day"
         }
 
         if(size > 2) {
             subscription = subList[2]
             name = if (subscription.subName.length > 13) "${subscription.subName.substring(0, 13)}..." else subscription.subName
-            expenseThree.text = "3. $name,\n\t\t\t$${subscription.subCost} ${subscription.subFrequency}"
+            textTotal = String.format("%,.2f", trueCost(costToDouble(subscription.subCost), subscription.subFrequency))
+            expenseThree.text = "3. $name,\n\t\t\t$$textTotal per Day"
         }
     }
 
@@ -132,9 +136,9 @@ class BreakdownFragment: Fragment() {
      */
     private fun trueCost(cost: Double, freq: String): Double {
         val costMultiplier = when(freq) {
-            "Weekly" -> 4.0
-            "Monthly" -> 1.0
-            else -> 1.0 / 12.0
+            "Weekly" -> 1.0 / 7.0
+            "Monthly" -> 1.0 / 30.0
+            else -> 1.0 / 365.0
         }
 
         return cost * costMultiplier
