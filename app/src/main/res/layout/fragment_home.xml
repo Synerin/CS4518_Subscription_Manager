@@ -83,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Filter Payments"
-            android:textSize="18sp"
+            android:textSize="24sp"
             android:layout_marginTop="30dp"/>
 
         <androidx.recyclerview.widget.RecyclerView

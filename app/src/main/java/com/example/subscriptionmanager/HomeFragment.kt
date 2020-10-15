@@ -167,9 +167,9 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         }
 
         if(day <= givenDay) {
-            result += (givenDay - day) / 100
+            result += (givenDay - day) / 100.0
         } else {
-            result += ((31.0 - givenDay) + day) / 100 // Generalization, may need to change later
+            result += givenDay / 100.0//((31.0 - givenDay) + day) / 100.0 // Generalization, may need to change later
         }
 
         return result
@@ -214,9 +214,13 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
             }
         }
 
-        val resultDate = "${resultCal.get(Calendar.MONTH)}/" +
-                "${resultCal.get(Calendar.DAY_OF_MONTH)}/" +
-                "${resultCal.get(Calendar.YEAR)}"
+        val resultDay: Int = resultCal.get(Calendar.DAY_OF_MONTH)
+        var resultMonth: Int = resultCal.get(Calendar.MONTH)
+        val resultYear: Int = resultCal.get(Calendar.YEAR)
+
+        if(resultMonth == 0) resultMonth = 12
+
+        val resultDate = "$resultMonth/$resultDay/$resultYear"
 
         return resultDate
     }
@@ -226,7 +230,7 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
 
         when (filter) {
             resources.getString(R.string.due_date) -> {
-                subList.sortBy { timeFromNow(it.subDueDate) }
+                subList.sortBy { timeFromNow(getNextDue(it.subDueDate, it.subFrequency)) }
             }
             resources.getString(R.string.cost_low_high) -> {
                 subList.sortBy { it.subCost.toDouble() }
@@ -280,7 +284,6 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        Log.d(TAG, "Hey fuck face, I hope you selected a filter because this got activated")
         filterSubs(filterSpinner.selectedItem.toString())
     }
 
