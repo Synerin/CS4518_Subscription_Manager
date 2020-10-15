@@ -179,16 +179,18 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         var result: Double = 0.0
 
         // I can almost feel the edge case issues
-        if(month <= givenMonth) {
+        if (month <= givenMonth) {
             result += givenMonth - month
         } else {
-            result += (12.0 - givenMonth) + month
+            result += (12.0 - month) + givenMonth
         }
 
-        if(day <= givenDay) {
+        if(month == givenMonth.toInt() && day <= givenDay) {
             result += (givenDay - day) / 100.0
+        } else if(day <= givenDay) {
+            result += (30.0 + givenDay - day) / 100.0
         } else {
-            result += givenDay / 100.0//((31.0 - givenDay) + day) / 100.0 // Generalization, may need to change later
+            result -= (30.0 - day + givenDay) / 100.0 // Generalization, may need to change later
         }
 
         return result
@@ -242,9 +244,12 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
 
         val resultDay: Int = resultCal.get(Calendar.DAY_OF_MONTH)
         var resultMonth: Int = resultCal.get(Calendar.MONTH)
-        val resultYear: Int = resultCal.get(Calendar.YEAR)
+        var resultYear: Int = resultCal.get(Calendar.YEAR)
 
-        if(resultMonth == 0) resultMonth = 12
+        if(resultMonth == 0) {
+            resultMonth = 12
+            resultYear -= 1
+        }
 
         val resultDate = "$resultMonth/$resultDay/$resultYear"
 
