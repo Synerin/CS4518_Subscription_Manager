@@ -1,6 +1,8 @@
 package com.example.subscriptionmanager
 
+import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +18,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 private const val TAG = "HomeFragment"
-class HomeFragment: Fragment() {
+class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var firedatabase: FirebaseDatabase
     private lateinit var upcomingExpenses: TextView
     private lateinit var endOfMonth: TextView
@@ -26,6 +28,8 @@ class HomeFragment: Fragment() {
     private lateinit var filterSpinner: Spinner
     private lateinit var filteredList: RecyclerView
     private var subList: MutableList<Subscription> = mutableListOf()
+
+    private var filterAlreadySet: Boolean = false
 
     private lateinit var myRef: DatabaseReference
 
@@ -62,20 +66,7 @@ class HomeFragment: Fragment() {
                     }
                     updateSoonest()
                     updateUpcoming()
-
-                    val adapter = SubAdapter(subList)
-                    filteredList.adapter = adapter
-
-                    context?.let {
-                        ArrayAdapter.createFromResource(
-                            it,
-                            R.array.filters,
-                            android.R.layout.simple_spinner_item
-                        ).also { filterAdapter ->
-                            filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                            filterSpinner.adapter = filterAdapter
-                        }
-                    }
+                    updateList()
 
                 }
             }
@@ -87,6 +78,27 @@ class HomeFragment: Fragment() {
         })
 
         return view
+    }
+
+    private fun updateList() {
+        val adapter = SubAdapter(subList)
+        filteredList.adapter = adapter
+
+        if(!filterAlreadySet) {
+            context?.let {
+                ArrayAdapter.createFromResource(
+                    it,
+                    R.array.filters,
+                    android.R.layout.simple_spinner_item
+                ).also { filterAdapter ->
+                    filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    filterSpinner.adapter = filterAdapter
+                    filterSpinner.onItemSelectedListener = this
+                }
+            }
+        }
+
+        filterAlreadySet = true
     }
 
     private fun updateUpcoming() {
@@ -214,7 +226,7 @@ class HomeFragment: Fragment() {
 
         when (filter) {
             resources.getString(R.string.due_date) -> {
-                subList.sortBy { getNextDue(it.subDueDate, it.subFrequency) }
+                subList.sortBy { timeFromNow(it.subDueDate) }
             }
             resources.getString(R.string.cost_low_high) -> {
                 subList.sortBy { it.subCost } // TODO: Make this one not stupid
@@ -229,6 +241,8 @@ class HomeFragment: Fragment() {
                 subList.sortBy { it.subName }
             }
         }
+
+        updateList()
     }
 
     companion object {
@@ -246,7 +260,7 @@ class HomeFragment: Fragment() {
         fun bind(sub: Subscription) {
             miniSubName.text = sub.subName
             miniSubCost.text = "$${sub.subCost}"
-            miniSubDue.text = sub.subDueDate
+            miniSubDue.text = getNextDue(sub.subDueDate, sub.subFrequency)
         }
     }
 
@@ -263,5 +277,14 @@ class HomeFragment: Fragment() {
             val sub = subs[position]
             holder.bind(sub)
         }
+    }
+
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+        Log.d(TAG, "Hey fuck face, I hope you selected a filter because this got activated")
+        filterSubs(filterSpinner.selectedItem.toString())
+    }
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+        TODO("Not yet implemented")
     }
 }
