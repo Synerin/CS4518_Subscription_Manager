@@ -1,12 +1,10 @@
 package com.example.subscriptionmanager
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,8 +15,12 @@ import com.google.firebase.database.*
 
 class BreakdownFragment: Fragment() {
     private lateinit var firedatabase: FirebaseDatabase
+    private lateinit var annualSpending: TextView
+    private lateinit var monthlySpending: TextView
     private lateinit var weeklySpending: TextView
     private lateinit var myRef : DatabaseReference
+    private var annualTotal: Double = 0.0
+    private var monthlyTotal: Double = 0.0
     private var weeklyTotal: Double = 0.0
     private lateinit var dailyCostList: RecyclerView
     private var subList: MutableList<Subscription> = mutableListOf()
@@ -30,7 +32,9 @@ class BreakdownFragment: Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_breakdown, container, false)
 
-        weeklySpending = view.findViewById(R.id.monthly_total_value)
+        annualSpending = view.findViewById(R.id.annual_total_value)
+        monthlySpending = view.findViewById(R.id.monthly_total_value)
+        weeklySpending = view.findViewById(R.id.weekly_total_value)
 
         dailyCostList = view.findViewById(R.id.daily_cost_list) as RecyclerView
         dailyCostList.layoutManager = LinearLayoutManager(context)
@@ -48,7 +52,7 @@ class BreakdownFragment: Fragment() {
                         val sub = user.getValue(Subscription::class.java)
 
                         if(sub != null) {
-                            calculateWeekly(sub.subCost, sub.subFrequency)
+                            calculateStats(sub.subCost, sub.subFrequency)
                             subList.add(sub)
                         }
                     }
@@ -69,20 +73,27 @@ class BreakdownFragment: Fragment() {
     }
 
     /**
-     * Calculate the weekly expense for a given subscription, adding to the weeklyTotal
+     * Calculate the annual, monthly, and weekly expense for a given subscription, adding to the totals
      *
      * @param subCost The cost of the subscription
      * @param subFrequency The frequency of the subscription, either Weekly, Monthly, or Yearly
-     * @return Nothing, but add the calculated weekly cost to the weeklyTotal
+     * @return Nothing, but add the calculated stats cost to their totals
      */
-    private fun calculateWeekly(subCost: String, subFrequency: String) {
-        // Calculate monthly cost based on subscription cost and subscription frequency
-        weeklyTotal += trueCost(costToDouble(subCost), subFrequency) * 7
+    private fun calculateStats(subCost: String, subFrequency: String) {
+        // Calculate costs for time periods based on subscription cost and subscription frequency
+        val trueCost = trueCost(costToDouble(subCost), subFrequency)
+        annualTotal += trueCost * 365
+        monthlyTotal += trueCost * 30
+        weeklyTotal += trueCost * 7
 
         // Format string to monetary units, e.g. 1234.5 => 1,234.50
-        val textTotal = moneyToStr(weeklyTotal)
+        val annualTextTotal = moneyToStr(annualTotal)
+        val monthlyTextTotal = moneyToStr(monthlyTotal)
+        val weeklyTextTotal = moneyToStr(weeklyTotal)
 
-        weeklySpending.text = "$${textTotal}"
+        annualSpending.text = "$${annualTextTotal}"
+        monthlySpending.text = "$${monthlyTextTotal}"
+        weeklySpending.text = "$${weeklyTextTotal}"
     }
 
     /**
