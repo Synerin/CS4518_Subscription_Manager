@@ -1,22 +1,15 @@
 package com.example.subscriptionmanager
 
-import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.fragment_sub_list.*
 import java.util.*
-import kotlin.collections.ArrayList
 import java.text.DateFormat
 
 private const val TAG = "CalendarFragment"
@@ -31,6 +24,7 @@ class CalendarFragment: Fragment(){
     private var subList: MutableList<Subscription> = mutableListOf()
     val calendar: Calendar = Calendar.getInstance()
     private lateinit var databaseRef: DatabaseReference
+    private var subsOnThisDay: MutableList<Subscription> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +42,31 @@ class CalendarFragment: Fragment(){
         editTextDate = view.findViewById(R.id.edit_text_date)
         expenses = view.findViewById(R.id.list_of_expenses)
         dateSelected = view.findViewById(R.id.date_selected)
+
+        firedatabase = FirebaseDatabase.getInstance()
+        val userID = FirebaseAuth.getInstance().currentUser?.uid
+        databaseRef = userID?.let { FirebaseDatabase.getInstance().getReference(it) }!!
+
+        databaseRef.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    for(user in dataSnapshot.children) {
+                        val sub = user.getValue(Subscription::class.java)
+
+                        if(sub != null) {
+                            subList.add(sub)
+                        }
+                    }
+
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+                //and probably wont be
+            }
+
+        })
 
         return view
     }
@@ -73,6 +92,21 @@ class CalendarFragment: Fragment(){
 
         }
 
+    }
+
+    private fun updateSubList(){
+        val selectedDate:Long = calendarView.date
+        val selectedDateString = selectedDate.toString()
+
+        for (sub in subList){
+            val dueDate = sub.subDueDate
+            if (dueDate.equals(selectedDateString)){
+                subsOnThisDay.add(sub)
+            }
+        }
+    }
+
+    private fun updateList(){
     }
 
 
