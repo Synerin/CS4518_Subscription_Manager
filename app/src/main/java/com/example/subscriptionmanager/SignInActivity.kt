@@ -24,7 +24,6 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 
-
 private const val TAG = "SignInActivity"
 
 class SignInActivity : AppCompatActivity() {
@@ -52,8 +51,9 @@ class SignInActivity : AppCompatActivity() {
         signInButton = findViewById(R.id.signInButton)
         signUpTextView = findViewById(R.id.textViewSignUp)
 
+        // Used to create "animation" which makes the help text "pop"
+        // in and out of of the emailEditText field based on current focus
         emailTextView.visibility = View.INVISIBLE
-
         emailEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 emailTextView.visibility = View.VISIBLE
@@ -62,8 +62,9 @@ class SignInActivity : AppCompatActivity() {
             }
         }
 
+        // Used to create "animation" which makes the help text "pop"
+        // in and out of of the passwordEditText field based on current focus
         passwordTextView.visibility = View.INVISIBLE
-
         passwordEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 passwordTextView.visibility = View.VISIBLE
@@ -72,12 +73,16 @@ class SignInActivity : AppCompatActivity() {
             }
         }
 
+        // Clears all focus and closes keyboard when background is pressed
         loginBackground.setOnClickListener {
             emailEditText.clearFocus()
             passwordEditText.clearFocus()
             closeKeyBoard()
         }
 
+        // Validates fields are not empty, and attempts to sign in the user
+        // using given credentials.  Displays toast upon error or empty fields.
+        // Otherwise, redirects user the Home Page tab within MainActivity
         signInButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
@@ -110,7 +115,9 @@ class SignInActivity : AppCompatActivity() {
                     })
         }
 
-        val ss = SpannableString("Don't have an account? Sign up!")
+        // Creates a clickable region within a TextView.  The "Sign Up!" portion
+        // of the string will be clickable, and will trigger a switch to the SignUpActivity
+        val ss = SpannableString("Don't have an account? Sign Up!")
         val clickableSpan: ClickableSpan = object : ClickableSpan() {
 
             override fun onClick(textView: View) {
@@ -133,6 +140,10 @@ class SignInActivity : AppCompatActivity() {
         signUpTextView.highlightColor = Color.TRANSPARENT
     }
 
+    /**
+     * Used to close the keyboard, however, this function does not work on
+     * virtual devices, and therefore has not actually been tested for functionality
+     */
     private fun closeKeyBoard() {
         val view = this.currentFocus
         if (view != null) {
@@ -141,5 +152,9 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Disables the ability to go back to previous screen.  This is needed
+     * so that the user can't circumvent the Sign In process
+     */
     override fun onBackPressed() {}
 }
