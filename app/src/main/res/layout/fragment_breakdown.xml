@@ -3,40 +3,67 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:text="@string/judgment"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/annual_total_value"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/budget_breakdown"
-            android:textSize="30sp"
-            android:gravity="center"/>
+            android:text="$0.00"
+            android:layout_gravity="center"
+            android:textSize="36sp"/>
 
-        <ProgressBar
-            android:id="@+id/spending_chart"
-            android:layout_width="200dp"
-            android:layout_height="200dp"/>
-        <!-- Will need to add chart here -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/annual_total"
+            android:layout_gravity="center"
+            android:textSize="30sp"/>
+
+        <TextView
+            android:id="@+id/monthly_total_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$0.00"
+            android:layout_gravity="center"
+            android:textSize="36sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/monthly_total"
+            android:layout_gravity="center"
+            android:textSize="30sp"/>
+
+        <TextView
+            android:id="@+id/weekly_total_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$0.00"
+            android:layout_gravity="center"
+            android:textSize="36sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/weekly_total"
+            android:layout_gravity="center"
+            android:textSize="30sp"/>
+
     </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/weekly_total"
-        android:layout_gravity="center"
-        android:textSize="30sp"/>
-
-    <TextView
-        android:id="@+id/monthly_total_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="$0.00"
-        android:layout_gravity="center"
-        android:textSize="40sp"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -48,7 +75,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="75dp"
+            android:layout_marginTop="25dp"
             android:text="@string/top_expenses"
             android:textSize="32sp"/>
 
