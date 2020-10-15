@@ -1,11 +1,16 @@
 package com.example.subscriptionmanager
 
+import android.opengl.Visibility
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -13,11 +18,9 @@ import com.google.firebase.database.*
 class BreakdownFragment: Fragment() {
     private lateinit var firedatabase: FirebaseDatabase
     private lateinit var weeklySpending: TextView
-    private lateinit var expenseOne: TextView
-    private lateinit var expenseTwo: TextView
-    private lateinit var expenseThree: TextView
     private lateinit var myRef : DatabaseReference
     private var weeklyTotal: Double = 0.0
+    private lateinit var dailyCostList: RecyclerView
     private var subList: MutableList<Subscription> = mutableListOf()
 
     override fun onCreateView(
@@ -28,9 +31,10 @@ class BreakdownFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_breakdown, container, false)
 
         weeklySpending = view.findViewById(R.id.monthly_total_value)
-        expenseOne = view.findViewById(R.id.expense_one)
-        expenseTwo = view.findViewById(R.id.expense_two)
-        expenseThree = view.findViewById(R.id.expense_three)
+
+        dailyCostList = view.findViewById(R.id.daily_cost_list) as RecyclerView
+        dailyCostList.layoutManager = LinearLayoutManager(context)
+
         firedatabase = FirebaseDatabase.getInstance()
         val userID = FirebaseAuth.getInstance().currentUser?.uid
         myRef = userID?.let { FirebaseDatabase.getInstance().getReference(it) }!!
@@ -50,6 +54,9 @@ class BreakdownFragment: Fragment() {
                     }
 
                     calculateTop()
+
+                    val adapter = SubAdapter(subList)
+                    dailyCostList.adapter = adapter
                 }
             }
 
@@ -73,43 +80,25 @@ class BreakdownFragment: Fragment() {
         weeklyTotal += trueCost(costToDouble(subCost), subFrequency) * 7
 
         // Format string to monetary units, e.g. 1234.5 => 1,234.50
-        val textTotal = String.format("%,.2f", weeklyTotal)
+        val textTotal = moneyToStr(weeklyTotal)
 
         weeklySpending.text = "$${textTotal}"
     }
 
     /**
+     * Take a double and format it into a USD string, i.e. x,xxx.xx
+     *
+     * @param value The money value as a double
+     * @return The formatted money string (no dollar sign)
+     */
+    private fun moneyToStr(value: Double): String {
+        return String.format("%,.2f", value)
+    }
+    /**
      * Calculate and set the top three expenses from the list of subscriptions
      */
     private fun calculateTop() {
-        val size: Int = subList.size
-        var subscription: Subscription? = null
-        var name: String? = null
-        var textTotal: String
-
         subList.sortByDescending { trueCost(costToDouble(it.subCost), it.subFrequency) }
-
-        if(size > 0) {
-            subscription = subList[0]
-            // 13 chars seems to be a reasonable maximum length given a textSize of 28sp
-            name = if (subscription.subName.length > 13) "${subscription.subName.substring(0, 13)}..." else subscription.subName
-            textTotal = String.format("%,.2f", trueCost(costToDouble(subscription.subCost), subscription.subFrequency))
-            expenseOne.text = "1. $name,\n\t\t\t$$textTotal per Day"
-        }
-
-        if(size > 1) {
-            subscription = subList[1]
-            name = if (subscription.subName.length > 13) "${subscription.subName.substring(0, 13)}..." else subscription.subName
-            textTotal = String.format("%,.2f", trueCost(costToDouble(subscription.subCost), subscription.subFrequency))
-            expenseTwo.text = "2. $name,\n\t\t\t$$textTotal per Day"
-        }
-
-        if(size > 2) {
-            subscription = subList[2]
-            name = if (subscription.subName.length > 13) "${subscription.subName.substring(0, 13)}..." else subscription.subName
-            textTotal = String.format("%,.2f", trueCost(costToDouble(subscription.subCost), subscription.subFrequency))
-            expenseThree.text = "3. $name,\n\t\t\t$$textTotal per Day"
-        }
     }
 
     /**
@@ -142,6 +131,36 @@ class BreakdownFragment: Fragment() {
         }
 
         return cost * costMultiplier
+    }
+
+    private inner class SubHolder(view: View):
+        RecyclerView.ViewHolder(view) {
+        val miniSubName: TextView = itemView.findViewById(R.id.mini_sub_name)
+        val miniSubCost: TextView = itemView.findViewById(R.id.mini_sub_cost)
+        val miniSubDue: TextView = itemView.findViewById(R.id.mini_sub_due)
+
+        fun bind(sub: Subscription) {
+            miniSubName.text = sub.subName
+            miniSubCost.text = "$${moneyToStr(trueCost(costToDouble(sub.subCost), sub.subFrequency))} per Day"
+            miniSubCost.gravity = Gravity.END
+            miniSubCost.textSize = 20.0F
+            miniSubDue.visibility = View.GONE
+        }
+    }
+
+    private inner class SubAdapter(var subs: List<Subscription>): RecyclerView.Adapter<SubHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubHolder {
+            val view = layoutInflater.inflate(R.layout.list_item_sub_mini, parent, false)
+            return SubHolder(view)
+        }
+
+        override fun getItemCount() = subs.size
+
+        override fun onBindViewHolder(holder: SubHolder, position: Int) {
+            val sub = subs[position]
+            holder.bind(sub)
+        }
     }
 
     companion object {

@@ -52,21 +52,10 @@
             android:text="@string/top_expenses"
             android:textSize="32sp"/>
 
-        <TextView
-            android:id="@+id/expense_one"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/daily_cost_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="28sp"/>
-        <TextView
-            android:id="@+id/expense_two"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="28sp"/>
-        <TextView
-            android:id="@+id/expense_three"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="28sp"/>
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
