@@ -80,6 +80,9 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         return view
     }
 
+    /**
+     * Recreate the filteredList RecyclerView with data ordered by the filterSubs method
+     */
     private fun updateList() {
         val adapter = SubAdapter(subList)
         filteredList.adapter = adapter
@@ -101,6 +104,10 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         filterAlreadySet = true
     }
 
+    /**
+     * Calculate the total expenses due by the end of the current month, and update
+     * upcomingExpenses to reflect this value
+     */
     private fun updateUpcoming() {
         var expenses: Double = 0.0
         val calendar: Calendar = Calendar.getInstance()
@@ -128,13 +135,16 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         endOfMonth.text = "Due by ${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())} $ordinal"
     }
 
+    /**
+     * Fill in the three soonest expense TextViews with the three soonest expenses,
+     * calculated by sorting subList by the next possible due date
+     */
     private fun updateSoonest() {
         subList.sortBy { timeFromNow(getNextDue(it.subDueDate, it.subFrequency)) }
         val size: Int = subList.size
         var name: String
         var due: String
 
-        // TODO: Fix
         if(size > 0) {
             name = subList[0].subName
             due = getNextDue(subList[0].subDueDate, subList[0].subFrequency)
@@ -152,6 +162,12 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         }
     }
 
+    /**
+     * Calculate the time between today and a given date, used by sorting calls
+     *
+     * @param date The initially set date for a subscription
+     * @return A value representing the time between today and the given date
+     */
     private fun timeFromNow(date: String): Double {
         val calendar: Calendar = Calendar.getInstance()
         val month: Int = calendar.get(Calendar.MONTH) + 1
@@ -178,6 +194,13 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         return result
     }
 
+    /**
+     * Get the next possible due date for a given date, based on frequency
+     *
+     * @param dueDate The supplied due date for a subscription
+     * @param frequency The frequency for a subscription
+     * @return The next possible due date for a subscription
+     */
     private fun getNextDue(dueDate: String, frequency: String): String {
         val dateValues: List<String> = dueDate.split("/")
         val givenMonth: Int = dateValues[0].toInt()
@@ -228,6 +251,11 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         return resultDate
     }
 
+    /**
+     * Filter the subList based on whichever filter was selected for filterSpinner
+     *
+     * @param filter The selected filter
+     */
     private fun filterSubs(filter: String) {
         val resources = resources
 
@@ -252,6 +280,12 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         updateList()
     }
 
+    /**
+     * Parse a monetary string value into a double for calculations
+     *
+     * @param value The monetary value as a string
+     * @return The value without dollar signs or commas, as a double
+     */
     private fun parseMoney(value: String): Double {
         var result = value.replace("$", "")
         result = result.replace(",", "")
