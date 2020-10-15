@@ -1,5 +1,6 @@
 package com.example.subscriptionmanager
 
+import java.net.FileNameMap
 import java.util.*
 
 /**
@@ -12,5 +13,5 @@ data class Subscription(
     var subFrequency: String = "",
     var subType: String = "",
     var subImportance: String = "",
-    var subDueDate: String = "",
+    var subDueDate: String = ""
 )

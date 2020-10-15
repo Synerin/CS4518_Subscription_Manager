@@ -20,7 +20,6 @@ class CalendarFragment: Fragment(){
     private lateinit var editTextDate: TextView
     private lateinit var expenses: RecyclerView
     private lateinit var dateSelected: Button
-    private lateinit var calendarTextAbove: TextView
     private var subList: MutableList<Subscription> = mutableListOf()
     val calendar: Calendar = Calendar.getInstance()
     private lateinit var databaseRef: DatabaseReference
@@ -38,7 +37,6 @@ class CalendarFragment: Fragment(){
         val view = inflater.inflate(R.layout.activity_calendar, container, false)
 
         calendarView = view.findViewById(R.id.full_calendar_view)
-        calendarTextAbove = view.findViewById(R.id.Calendar)
         editTextDate = view.findViewById(R.id.edit_text_date)
         expenses = view.findViewById(R.id.list_of_expenses)
         dateSelected = view.findViewById(R.id.date_selected)
@@ -60,7 +58,6 @@ class CalendarFragment: Fragment(){
 
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 TODO("Not yet implemented")
                 //and probably wont be
@@ -106,9 +103,11 @@ class CalendarFragment: Fragment(){
         }
     }
 
-    private fun updateList(){
+    companion object {
+        fun newInstance(): CalendarFragment {
+            return CalendarFragment()
+        }
     }
-
 
 
 }
