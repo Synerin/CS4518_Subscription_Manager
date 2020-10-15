@@ -54,21 +54,21 @@
             android:id="@+id/soonest_expense_one_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Soonest expense (Date)"
+            android:text="Soonest expense"
             android:textSize="24dp" />
 
         <TextView
             android:id="@+id/soonest_expense_two_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="2nd soonest expense (Date)"
+            android:text="2nd soonest expense"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/soonest_expense_three_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="3rd soonest expense (Date)"
+            android:text="3rd soonest expense"
             android:textSize="20sp" />
 
     </LinearLayout>
