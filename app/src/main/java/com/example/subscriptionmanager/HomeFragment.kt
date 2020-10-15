@@ -209,6 +209,28 @@ class HomeFragment: Fragment() {
         return resultDate
     }
 
+    private fun filterSubs(filter: String) {
+        val resources = resources
+
+        when (filter) {
+            resources.getString(R.string.due_date) -> {
+                subList.sortBy { getNextDue(it.subDueDate, it.subFrequency) }
+            }
+            resources.getString(R.string.cost_low_high) -> {
+                subList.sortBy { it.subCost } // TODO: Make this one not stupid
+            }
+            resources.getString(R.string.cost_high_low) -> {
+                subList.sortByDescending { it.subCost } // TODO: This one too
+            }
+            resources.getString(R.string.importance) -> {
+                subList.sortByDescending { it.subImportance }
+            }
+            resources.getString(R.string.alphabetically) -> {
+                subList.sortBy { it.subName }
+            }
+        }
+    }
+
     companion object {
         fun newInstance(): HomeFragment {
             return HomeFragment()

@@ -7,13 +7,20 @@
     <string name="dueInMonth">Due by End of Month</string>
     <string name="comingUpSoon">Coming Up Soon</string>
 
+    <string name="filter_subscriptions">Filter Subscriptions</string>
+    <string name="due_date">Due Date</string>
+    <string name="cost_low_high">Cost (Low - High)</string>
+    <string name="cost_high_low">Cost (High - Low)</string>
+    <string name="importance">Importance</string>
+    <string name="alphabetically">Alphabetically</string>
+
     <string-array name="filters">
-        <item>Filter Subscriptions</item>
-        <item>Due Date</item>
-        <item>Cost (Low - High)</item>
-        <item>Cost (High - Low)</item>
-        <item>Importance</item>
-        <item>Alphabetically</item>
+        <item>@string/filter_subscriptions</item>
+        <item>@string/due_date</item>
+        <item>@string/cost_low_high</item>
+        <item>@string/cost_high_low</item>
+        <item>@string/importance</item>
+        <item>@string/alphabetically</item>
     </string-array>
 
     <string-array name="frequencies">
