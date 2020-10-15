@@ -111,7 +111,7 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
             val dueDate = getNextDue(sub.subDueDate, sub.subFrequency).split("/")
             val m: Int = dueDate[0].toInt()
             val d: Int = dueDate[1].toInt()
-            if(m == month && day < d) expenses += sub.subCost.toDouble()
+            if(m == month && day < d) expenses += parseMoney(sub.subCost)
         }
 
         var ordinal: String
@@ -121,7 +121,10 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
             else -> "30th"
         }
 
-        upcomingExpenses.text = "$$expenses" // TODO: Format string so cents are accurately represented
+        // Format string to monetary units, e.g. 1234.5 => 1,234.50
+        val textTotal = String.format("%,.2f", expenses)
+
+        upcomingExpenses.text = "$$textTotal" // TODO: Format string so cents are accurately represented
         endOfMonth.text = "Due by ${calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())} $ordinal"
     }
 
@@ -233,10 +236,10 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
                 subList.sortBy { timeFromNow(getNextDue(it.subDueDate, it.subFrequency)) }
             }
             resources.getString(R.string.cost_low_high) -> {
-                subList.sortBy { it.subCost.toDouble() }
+                subList.sortBy { parseMoney(it.subCost) }
             }
             resources.getString(R.string.cost_high_low) -> {
-                subList.sortByDescending { it.subCost.toDouble() }
+                subList.sortByDescending { parseMoney(it.subCost) }
             }
             resources.getString(R.string.importance) -> {
                 subList.sortByDescending { it.subImportance }
@@ -247,6 +250,13 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         }
 
         updateList()
+    }
+
+    private fun parseMoney(value: String): Double {
+        var result = value.replace("$", "")
+        result = result.replace(",", "")
+
+        return result.toDouble()
     }
 
     companion object {
