@@ -18,10 +18,15 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Checking user's login status is the first thing done in the application
+        // to avoid any security errors, and people being able to access the app
+        // without signing in or signing up first
         handleSignIn();
 
         bottomNav.selectedItemId = R.id.menu_home
 
+        // Controls Bottom Navigation menu navigation, and triggers fragment
+        // changes based on interaction with tabs
         bottomNav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.menu_calender -> {
@@ -51,12 +56,18 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
         }
     }
 
+    /**
+     * Sets up the Bottom Navigation menu
+     */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu: this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_top_navigation, menu)
         return true
     }
 
+    /**
+     * Sign the user out upon clicking "Sign Out" button and triggers switch to SignInActivity
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.action_signout -> {
             FirebaseAuth.getInstance().signOut()
@@ -72,6 +83,9 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
         }
     }
 
+    /**
+     * A simple function which centralizes code required to switch fragments
+     */
     private fun loadFragment(fragment: Fragment) {
         // load fragment
         val transaction = supportFragmentManager.beginTransaction()
@@ -80,6 +94,10 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
         transaction.commit()
     }
 
+    /**
+     * Checks to see if the user is currently signed in when they open the app.
+     * If they are, nothing happens.  Otherwise, they are brought to the Sign In page
+     */
     private fun handleSignIn() {
         val currentUser = FirebaseAuth.getInstance().currentUser
 
@@ -89,13 +107,27 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
         }
     }
 
+    /**
+     * Disables the back button so that a user doesn't get brought to the login
+     * screen upon clicking it.  This forces the user to use the Sign Out button
+     * that is given.  The back button also isn't necessary given the structure
+     * of our application, as it is all just one Activity with rotating fragments.
+     */
     override fun onBackPressed() {}
 
+    /**
+     * Changes the currently selected tab to Add Payments and loads the
+     * corresponding fragment with the given subscription ID.
+     */
     override fun onSubSelected(subID: String) {
         bottomNav.selectedItemId = R.id.menu_edit_payments
         loadFragment(AddPaymentFragment.newInstance(subID))
     }
 
+    /**
+     * Changes the currently selected tab to Add Payments and loads the
+     * corresponding fragment.
+     */
     override fun onAddSelected() {
         bottomNav.selectedItemId = R.id.menu_edit_payments
         loadFragment(AddPaymentFragment())

@@ -52,6 +52,8 @@ class AddPaymentFragment : Fragment() {
 
         editTextSubCost.addTextChangedListener(MoneyTextWatcher(editTextSubCost));
 
+        // Creates DatePicker popup for getting subscription due date, and sets
+        // editTextSubDueDate text value based on user interaction
         editTextSubDueDate.inputType = InputType.TYPE_NULL
         editTextSubDueDate.setOnClickListener(View.OnClickListener {
             val calendar: Calendar = Calendar.getInstance()
@@ -71,6 +73,8 @@ class AddPaymentFragment : Fragment() {
             picker.show()
         })
 
+        // Validates all fields are complete, adds the subscription to the database,
+        // and clears all fields for adding additional subscription
         buttonSubmit.setOnClickListener {
             if (!validateInput()) {
                 val toast: Toast =
@@ -86,6 +90,7 @@ class AddPaymentFragment : Fragment() {
             }
         }
 
+        // Clears all input field text values
         buttonClear.setOnClickListener {
             clearFields()
         }
@@ -93,10 +98,19 @@ class AddPaymentFragment : Fragment() {
         return view
     }
 
+    /**
+     * When attempting to edit a specific subscription, the fields
+     * will be auto-filled using this function, given the unique key
+     * that corresponds to the subscription that was selected for editing
+     *
+     * @param subID The unique key of the subscription being passed in
+     */
     private fun populateSub(subID: String) {
         val userID = FirebaseAuth.getInstance().currentUser?.uid
         val myRef: DatabaseReference = userID?.let { FirebaseDatabase.getInstance().getReference(it).child(subID) }!!
         myRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            // Given a DataSnapshot corresponding to a users specific subscription,
+            // load in its data, and update it whenever its value changes
             override fun onDataChange(snapshot: DataSnapshot) {
                 val sub = snapshot.getValue(Subscription::class.java)
                 if (sub != null) {
@@ -112,13 +126,15 @@ class AddPaymentFragment : Fragment() {
                 }
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
+            override fun onCancelled(error: DatabaseError) {}
         })
     }
 
+    /**
+     * Validates all given fields are filled in
+     *
+     * @return      False if any fields are blank, else True
+     */
     private fun validateInput(): Boolean {
         return when {
             editTextSubName.text.isBlank() -> false
@@ -129,6 +145,10 @@ class AddPaymentFragment : Fragment() {
         }
     }
 
+    /**
+     * Given all fields are filled in, add or update a
+     * subscription to/in the database using field values
+     */
     private fun addSubscription() {
         val sub = Subscription();
         sub.subName = editTextSubName.text.toString()
@@ -138,6 +158,10 @@ class AddPaymentFragment : Fragment() {
         sub.subImportance = importanceSpinner.selectedItem.toString()
         sub.subType = editTextSubType.text.toString()
 
+        // {arguments} will be non-null if we are currently editing a subscription,
+        // otherwise, we are adding a new subscription to the database. If we are
+        // updating a subscription, we need its unique ID.  Otherwise, we will use
+        // the randomly generated one assigned in the Subscription constructor
         if(arguments != null) {
             sub.uniqueId = arguments?.getSerializable(ARG_SUB_ID) as String
         }
@@ -150,6 +174,10 @@ class AddPaymentFragment : Fragment() {
         }
     }
 
+    /**
+     * Clear all EditText fields and clear arguments, which
+     * changes mode from edit -> add subscription
+     */
     private fun clearFields() {
         arguments = null
         editTextSubCost.text.clear()
