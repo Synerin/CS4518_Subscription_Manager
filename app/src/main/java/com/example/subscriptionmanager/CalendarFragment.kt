@@ -26,10 +26,13 @@ class CalendarFragment: Fragment(){
     private lateinit var databaseRef: DatabaseReference
     private var subsOnThisDay: MutableList<Subscription> = mutableListOf()
 
+    //probably will not even need this
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
+    //creates all objects on the screen, readies them to be displayed,
+    //and
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,7 +60,7 @@ class CalendarFragment: Fragment(){
                             subList.add(sub)
                         }
                     }
-
+                    updateSubList()
                 }
             }
 
@@ -105,10 +108,4 @@ class CalendarFragment: Fragment(){
             }
         }
     }
-
-    private fun updateList(){
-    }
-
-
-
 }
