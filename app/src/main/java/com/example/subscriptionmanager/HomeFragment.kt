@@ -207,6 +207,7 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         val dateValues: List<String> = dueDate.split("/")
         val givenMonth: Int = dateValues[0].toInt()
         val givenDay: Int = dateValues[1].toInt()
+        val givenYear: Int = dateValues[2].toInt()
 
         var calendar: Calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -223,22 +224,30 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
                     resultCal.set(Calendar.YEAR, year + 1)
                 }
 
-                resultCal.set(Calendar.MONTH, givenMonth)
+                resultCal.set(Calendar.MONTH, givenMonth - 1)
                 resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
             }
             "Monthly" -> {
                 if(day < givenDay) {
-                    resultCal.set(Calendar.MONTH, month)
+                    resultCal.set(Calendar.MONTH, month - 1)
                 } else {
-                    resultCal.set(Calendar.MONTH, month + 1)
+                    resultCal.set(Calendar.MONTH, month)
                 }
 
                 resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
             }
             "Weekly" -> {
                 // TODO: Update values accurately
-                resultCal.set(Calendar.MONTH, givenMonth)
-                resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
+                resultCal.set(givenYear, givenMonth - 1, givenDay)
+
+                val givenDayOfWeek: Int = resultCal.get(Calendar.DAY_OF_WEEK)
+                val dayOfWeek: Int = calendar.get(Calendar.DAY_OF_WEEK)
+                Log.d(TAG, "The givenDayOfWeek for the subscription on $givenMonth/$givenDay is $givenDayOfWeek")
+                if(dayOfWeek <= givenDayOfWeek) {
+                    resultCal.set(Calendar.DAY_OF_MONTH, day + givenDayOfWeek - dayOfWeek)
+                } else {
+                    resultCal.set(Calendar.DAY_OF_MONTH, day + dayOfWeek - givenDayOfWeek - 1)
+                }
             }
         }
 
@@ -251,7 +260,7 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
             resultYear -= 1
         }
 
-        val resultDate = "$resultMonth/$resultDay/$resultYear"
+        val resultDate = "${resultMonth + 1}/$resultDay/$resultYear"
 
         return resultDate
     }
