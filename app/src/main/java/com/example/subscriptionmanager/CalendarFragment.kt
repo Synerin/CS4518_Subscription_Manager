@@ -1,9 +1,11 @@
 package com.example.subscriptionmanager
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.TextView
@@ -25,6 +27,7 @@ class CalendarFragment : Fragment() {
     private var subsOnThisDay: MutableList<Subscription> = mutableListOf()
 
     private var selectedDate: String = ""
+    private var calendar: Calendar = Calendar.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,8 +53,7 @@ class CalendarFragment : Fragment() {
                             subList.add(sub)
                         }
                     }
-                    val adapter = SubAdapter(subList)
-                    expensesRecyclerView.adapter = adapter
+                    updateList()
                 }
             }
 
@@ -61,10 +63,108 @@ class CalendarFragment : Fragment() {
         return view
     }
 
+    /**
+     * Recreate the filteredList RecyclerView with data ordered by the filterSubs method
+     */
+    private fun updateList() {
+        val adapter = SubAdapter(subsOnThisDay)
+        expensesRecyclerView.adapter = adapter
+    }
+
+    /**
+     * Filter the subList based on date
+     *
+     * @param date The selected filter
+     */
+    private fun filterSubsByDate(date: String) {
+        //subsOnThisDay.clear()
+
+        for(item in subList) {
+            Log.d(TAG, "getNextDue result: (${getNextDue(date, item.subDueDate, item.subFrequency)}), date is: ($date)")
+            if(getNextDue(date, item.subDueDate, item.subFrequency) == date) {
+                Log.d(TAG, "get fucked you fucking nerd")
+                subsOnThisDay.add(item)
+            }
+        }
+
+        updateList()
+    }
+
+    /**
+     * Get the next possible due date for a given date, based on frequency
+     *
+     * @param dueDate The supplied due date for a subscription
+     * @param frequency The frequency for a subscription
+     * @return The next possible due date for a subscription
+     */
+    private fun getNextDue(selectedDate: String, dueDate: String, frequency: String): String {
+        val dateValues: List<String> = dueDate.split("/")
+        val givenMonth: Int = dateValues[0].toInt()
+        val givenDay: Int = dateValues[1].toInt()
+        val givenYear: Int = dateValues[2].toInt()
+
+        var currentCalendar: Calendar = Calendar.getInstance()
+        val selectedValues: List<String> = selectedDate.split("/")
+        val currentMonth = selectedValues[0].toInt()
+        val currentDay = selectedValues[1].toInt()
+        val currentYear = selectedValues[2].toInt()
+
+        var resultCal: Calendar = Calendar.getInstance()
+
+        when (frequency) {
+            "Yearly" -> {
+                if(currentMonth < givenMonth) {
+                    resultCal.set(Calendar.YEAR, currentYear)
+                } else {
+                    resultCal.set(Calendar.YEAR, currentYear + 1)
+                }
+
+                resultCal.set(Calendar.MONTH, givenMonth)
+                resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
+            }
+            "Monthly" -> {
+                if(currentDay < givenDay) {
+                    resultCal.set(Calendar.MONTH, currentMonth)
+                } else {
+                    resultCal.set(Calendar.MONTH, currentMonth + 1)
+                }
+
+                resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
+            }
+            "Weekly" -> {
+                resultCal.set(givenYear, givenMonth - 1, givenDay)
+
+                val givenDayOfWeek: Int = resultCal.get(Calendar.DAY_OF_WEEK)
+                val currentDayOfWeek: Int = currentCalendar.get(Calendar.DAY_OF_WEEK)
+
+                if(currentDayOfWeek <= givenDayOfWeek) {
+                    resultCal.set(Calendar.DAY_OF_MONTH, currentDay + givenDayOfWeek - currentDayOfWeek)
+                } else {
+                    resultCal.set(Calendar.DAY_OF_MONTH, currentDay + 7 - currentDayOfWeek + givenDayOfWeek)
+                }
+
+            }
+        }
+
+        val resultDay: Int = resultCal.get(Calendar.DAY_OF_MONTH)
+        var resultMonth: Int = resultCal.get(Calendar.MONTH)
+        var resultYear: Int = resultCal.get(Calendar.YEAR)
+
+        if(resultMonth == 0) {
+            resultMonth = 12
+            resultYear -= 1
+        }
+
+        val resultDate = "${resultMonth + 1}/$resultDay/$resultYear"
+
+        return resultDate
+    }
+
     override fun onStart() {
         super.onStart()
         calendarView.setOnDateChangeListener { _, year, monthOfYear, dayOfMonth ->
             selectedDate = (monthOfYear + 1).toString() + "/" + dayOfMonth.toString() + "/" + year.toString()
+            filterSubsByDate(selectedDate)
         }
     }
 
