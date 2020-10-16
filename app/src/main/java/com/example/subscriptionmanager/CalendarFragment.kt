@@ -132,9 +132,11 @@ class CalendarFragment : Fragment() {
                 resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
             }
             "Weekly" -> {
-                resultCal.set(givenYear, givenMonth - 1, givenDay)
+                val dummyCalendar: Calendar = Calendar.getInstance()
+                dummyCalendar.set(givenYear, givenMonth - 1, givenDay)
+                Log.d(TAG,"I'm going to shoot off my fucking kneecaps: Dummy Calendar has ${dummyCalendar.get(Calendar.MONTH)}/${dummyCalendar.get(Calendar.DAY_OF_MONTH)}/${dummyCalendar.get(Calendar.YEAR)}")
 
-                val givenDayOfWeek: Int = resultCal.get(Calendar.DAY_OF_WEEK)
+                val givenDayOfWeek: Int = dummyCalendar.get(Calendar.DAY_OF_WEEK)
                 val currentDayOfWeek: Int = currentCalendar.get(Calendar.DAY_OF_WEEK)
 
                 if(currentDayOfWeek <= givenDayOfWeek) {
