@@ -77,12 +77,10 @@ class CalendarFragment : Fragment() {
      * @param date The selected filter
      */
     private fun filterSubsByDate(date: String) {
-        //subsOnThisDay.clear()
+        subsOnThisDay.clear()
 
         for(item in subList) {
-            Log.d(TAG, "getNextDue result: (${getNextDue(date, item.subDueDate, item.subFrequency)}), date is: ($date)")
-            if(getNextDue(date, item.subDueDate, item.subFrequency) == date) {
-                Log.d(TAG, "get fucked you fucking nerd")
+            if(getNextDue(date, item.subDueDate, item.subFrequency)) {
                 subsOnThisDay.add(item)
             }
         }
@@ -97,69 +95,38 @@ class CalendarFragment : Fragment() {
      * @param frequency The frequency for a subscription
      * @return The next possible due date for a subscription
      */
-    private fun getNextDue(selectedDate: String, dueDate: String, frequency: String): String {
+    private fun getNextDue(selectedDate: String, dueDate: String, frequency: String): Boolean {
         val dateValues: List<String> = dueDate.split("/")
         val givenMonth: Int = dateValues[0].toInt()
         val givenDay: Int = dateValues[1].toInt()
         val givenYear: Int = dateValues[2].toInt()
 
-        var currentCalendar: Calendar = Calendar.getInstance()
         val selectedValues: List<String> = selectedDate.split("/")
-        val currentMonth = selectedValues[0].toInt()
-        val currentDay = selectedValues[1].toInt()
-        val currentYear = selectedValues[2].toInt()
-
-        var resultCal: Calendar = Calendar.getInstance()
+        val selectedMonth = selectedValues[0].toInt()
+        val selectedDay = selectedValues[1].toInt()
+        val selectedYear = selectedValues[2].toInt()
 
         when (frequency) {
             "Yearly" -> {
-                if(currentMonth < givenMonth) {
-                    resultCal.set(Calendar.YEAR, currentYear)
-                } else {
-                    resultCal.set(Calendar.YEAR, currentYear + 1)
-                }
-
-                resultCal.set(Calendar.MONTH, givenMonth)
-                resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
+                if(givenMonth == selectedMonth && givenDay == selectedDay) return true
             }
             "Monthly" -> {
-                if(currentDay < givenDay) {
-                    resultCal.set(Calendar.MONTH, currentMonth)
-                } else {
-                    resultCal.set(Calendar.MONTH, currentMonth + 1)
-                }
-
-                resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
+                if(givenDay == selectedDay) return true
             }
             "Weekly" -> {
-                val dummyCalendar: Calendar = Calendar.getInstance()
-                dummyCalendar.set(givenYear, givenMonth - 1, givenDay)
-                Log.d(TAG,"I'm going to shoot off my fucking kneecaps: Dummy Calendar has ${dummyCalendar.get(Calendar.MONTH)}/${dummyCalendar.get(Calendar.DAY_OF_MONTH)}/${dummyCalendar.get(Calendar.YEAR)}")
+                val givenCalendar: Calendar = Calendar.getInstance()
+                givenCalendar.set(givenYear, givenMonth, givenDay)
+                val givenDayOfWeek: Int = givenCalendar.get(Calendar.DAY_OF_WEEK)
 
-                val givenDayOfWeek: Int = dummyCalendar.get(Calendar.DAY_OF_WEEK)
+                val currentCalendar: Calendar = Calendar.getInstance()
+                currentCalendar.set(selectedYear, selectedMonth, selectedDay)
                 val currentDayOfWeek: Int = currentCalendar.get(Calendar.DAY_OF_WEEK)
 
-                if(currentDayOfWeek <= givenDayOfWeek) {
-                    resultCal.set(Calendar.DAY_OF_MONTH, currentDay + givenDayOfWeek - currentDayOfWeek)
-                } else {
-                    resultCal.set(Calendar.DAY_OF_MONTH, currentDay + 7 - currentDayOfWeek + givenDayOfWeek)
-                }
-
+                if(currentDayOfWeek == givenDayOfWeek) return true
             }
         }
 
-        val resultDay: Int = resultCal.get(Calendar.DAY_OF_MONTH)
-        var resultMonth: Int = resultCal.get(Calendar.MONTH)
-        var resultYear: Int = resultCal.get(Calendar.YEAR)
-
-        if(resultMonth == 0) {
-            resultMonth = 12
-            resultYear -= 1
-        }
-
-        val resultDate = "${resultMonth + 1}/$resultDay/$resultYear"
-
-        return resultDate
+        return false
     }
 
     override fun onStart() {

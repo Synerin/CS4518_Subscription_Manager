@@ -286,7 +286,12 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
             resultYear -= 1
         }
 
-        val resultDate = "${resultMonth + 1}/$resultDay/$resultYear"
+        val resultDate: String
+        resultDate = if(frequency == "Yearly") {
+            "${resultMonth}/$resultDay/$resultYear"
+        } else {
+            "${resultMonth + 1}/$resultDay/$resultYear"
+        }
 
         return resultDate
     }
