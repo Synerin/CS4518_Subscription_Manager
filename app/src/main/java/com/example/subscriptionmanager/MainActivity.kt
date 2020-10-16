@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity(), SubListFragment.Callbacks {
             when (it.itemId) {
                 R.id.menu_calender -> {
                     title = "Calender"
+                    loadFragment(CalendarFragment.newInstance())
                     return@setOnNavigationItemSelectedListener true
                 }
                 R.id.menu_payments_breakdown -> {

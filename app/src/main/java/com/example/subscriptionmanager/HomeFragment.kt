@@ -1,6 +1,5 @@
 package com.example.subscriptionmanager
 
-import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,14 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.fragment_sub_list.*
 import java.util.*
-import kotlin.collections.ArrayList
 
 private const val TAG = "HomeFragment"
 class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
@@ -87,6 +83,7 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         val adapter = SubAdapter(subList)
         filteredList.adapter = adapter
 
+        // For filter spinner
         if(!filterAlreadySet) {
             context?.let {
                 ArrayAdapter.createFromResource(
@@ -102,6 +99,35 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         }
 
         filterAlreadySet = true
+    }
+
+    /**
+     * Filter the subList based on whichever filter was selected for filterSpinner
+     *
+     * @param filter The selected filter
+     */
+    private fun filterSubs(filter: String) {
+        val resources = resources
+
+        when (filter) {
+            resources.getString(R.string.due_date) -> {
+                subList.sortBy { timeFromNow(getNextDue(it.subDueDate, it.subFrequency)) }
+            }
+            resources.getString(R.string.cost_low_high) -> {
+                subList.sortBy { parseMoney(it.subCost) }
+            }
+            resources.getString(R.string.cost_high_low) -> {
+                subList.sortByDescending { parseMoney(it.subCost) }
+            }
+            resources.getString(R.string.importance) -> {
+                subList.sortByDescending { it.subImportance }
+            }
+            resources.getString(R.string.alphabetically) -> {
+                subList.sortBy { it.subName }
+            }
+        }
+
+        updateList()
     }
 
     /**
@@ -207,38 +233,47 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         val dateValues: List<String> = dueDate.split("/")
         val givenMonth: Int = dateValues[0].toInt()
         val givenDay: Int = dateValues[1].toInt()
+        val givenYear: Int = dateValues[2].toInt()
 
-        var calendar: Calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH) + 1
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        var currentCalendar: Calendar = Calendar.getInstance() // Current date
+        val currentYear = currentCalendar.get(Calendar.YEAR)
+        val currentMonth = currentCalendar.get(Calendar.MONTH) + 1
+        val currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH)
 
         var resultCal: Calendar = Calendar.getInstance()
 
         when (frequency) {
             "Yearly" -> {
-                if(month < givenMonth) {
-                    resultCal.set(Calendar.YEAR, year)
+                if(currentMonth < givenMonth) {
+                    resultCal.set(Calendar.YEAR, currentYear)
                 } else {
-                    resultCal.set(Calendar.YEAR, year + 1)
+                    resultCal.set(Calendar.YEAR, currentYear + 1)
                 }
 
                 resultCal.set(Calendar.MONTH, givenMonth)
                 resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
             }
             "Monthly" -> {
-                if(day < givenDay) {
-                    resultCal.set(Calendar.MONTH, month)
+                if(currentDay < givenDay) {
+                    resultCal.set(Calendar.MONTH, currentMonth)
                 } else {
-                    resultCal.set(Calendar.MONTH, month + 1)
+                    resultCal.set(Calendar.MONTH, currentMonth + 1)
                 }
 
                 resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
             }
             "Weekly" -> {
-                // TODO: Update values accurately
-                resultCal.set(Calendar.MONTH, givenMonth)
-                resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
+                resultCal.set(givenYear, givenMonth - 1, givenDay)
+
+                val givenDayOfWeek: Int = resultCal.get(Calendar.DAY_OF_WEEK)
+                val currentDayOfWeek: Int = currentCalendar.get(Calendar.DAY_OF_WEEK)
+
+                if(currentDayOfWeek <= givenDayOfWeek) {
+                    resultCal.set(Calendar.DAY_OF_MONTH, currentDay + givenDayOfWeek - currentDayOfWeek)
+                } else {
+                    resultCal.set(Calendar.DAY_OF_MONTH, currentDay + 7 - currentDayOfWeek + givenDayOfWeek)
+                }
+
             }
         }
 
@@ -251,38 +286,14 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
             resultYear -= 1
         }
 
-        val resultDate = "$resultMonth/$resultDay/$resultYear"
-
-        return resultDate
-    }
-
-    /**
-     * Filter the subList based on whichever filter was selected for filterSpinner
-     *
-     * @param filter The selected filter
-     */
-    private fun filterSubs(filter: String) {
-        val resources = resources
-
-        when (filter) {
-            resources.getString(R.string.due_date) -> {
-                subList.sortBy { timeFromNow(getNextDue(it.subDueDate, it.subFrequency)) }
-            }
-            resources.getString(R.string.cost_low_high) -> {
-                subList.sortBy { parseMoney(it.subCost) }
-            }
-            resources.getString(R.string.cost_high_low) -> {
-                subList.sortByDescending { parseMoney(it.subCost) }
-            }
-            resources.getString(R.string.importance) -> {
-                subList.sortByDescending { it.subImportance }
-            }
-            resources.getString(R.string.alphabetically) -> {
-                subList.sortBy { it.subName }
-            }
+        val resultDate: String
+        resultDate = if(frequency == "Yearly") {
+            "${resultMonth}/$resultDay/$resultYear"
+        } else {
+            "${resultMonth + 1}/$resultDay/$resultYear"
         }
 
-        updateList()
+        return resultDate
     }
 
     /**
@@ -298,27 +309,20 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         return result.toDouble()
     }
 
-    companion object {
-        fun newInstance(): HomeFragment {
-            return HomeFragment()
-        }
-    }
-
     private inner class SubHolder(view: View):
         RecyclerView.ViewHolder(view) {
         val miniSubName: TextView = itemView.findViewById(R.id.mini_sub_name)
         val miniSubCost: TextView = itemView.findViewById(R.id.mini_sub_cost)
         val miniSubDue: TextView = itemView.findViewById(R.id.mini_sub_due)
-
         fun bind(sub: Subscription) {
             miniSubName.text = sub.subName
             miniSubCost.text = "$${sub.subCost}"
             miniSubDue.text = getNextDue(sub.subDueDate, sub.subFrequency)
         }
+
     }
 
     private inner class SubAdapter(var subs: List<Subscription>): RecyclerView.Adapter<SubHolder>() {
-
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubHolder {
             val view = layoutInflater.inflate(R.layout.list_item_sub_mini, parent, false)
             return SubHolder(view)
@@ -330,6 +334,7 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
             val sub = subs[position]
             holder.bind(sub)
         }
+
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
@@ -338,5 +343,11 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
         TODO("Not yet implemented")
+    }
+
+    companion object {
+        fun newInstance(): HomeFragment {
+            return HomeFragment()
+        }
     }
 }
