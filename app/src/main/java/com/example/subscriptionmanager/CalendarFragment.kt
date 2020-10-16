@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.CalendarView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -33,7 +34,8 @@ class CalendarFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_calendar, container, false)
 
         calendarView = view.findViewById(R.id.full_calendar_view)
-        expensesRecyclerView = view.findViewById(R.id.expenses_recycler_view)
+        expensesRecyclerView = view.findViewById(R.id.expenses_recycler_view) as RecyclerView
+        expensesRecyclerView.layoutManager = LinearLayoutManager(context)
 
         val userID = FirebaseAuth.getInstance().currentUser?.uid
         databaseRef = userID?.let { FirebaseDatabase.getInstance().getReference(it) }!!
@@ -71,6 +73,7 @@ class CalendarFragment : Fragment() {
         val miniSubName: TextView = itemView.findViewById(R.id.mini_sub_name)
         val miniSubCost: TextView = itemView.findViewById(R.id.mini_sub_cost)
         val miniSubDue: TextView = itemView.findViewById(R.id.mini_sub_due)
+
         fun bind(sub: Subscription) {
             miniSubName.text = sub.subName
             miniSubCost.text = "$${sub.subCost}"
@@ -79,15 +82,15 @@ class CalendarFragment : Fragment() {
 
     }
 
-    private inner class SubAdapter(var subs: List<Subscription>): RecyclerView.Adapter<CalendarFragment.SubHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarFragment.SubHolder {
+    private inner class SubAdapter(var subs: List<Subscription>): RecyclerView.Adapter<SubHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubHolder {
             val view = layoutInflater.inflate(R.layout.list_item_sub_mini, parent, false)
             return SubHolder(view)
         }
 
         override fun getItemCount() = subs.size
 
-        override fun onBindViewHolder(holder: CalendarFragment.SubHolder, position: Int) {
+        override fun onBindViewHolder(holder: SubHolder, position: Int) {
             val sub = subs[position]
             holder.bind(sub)
         }
