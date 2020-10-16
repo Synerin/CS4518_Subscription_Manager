@@ -64,7 +64,7 @@ class AddPaymentFragment : Fragment() {
             picker = context?.let { it1 ->
                 DatePickerDialog(
                     it1,
-                    { _, _, monthOfYear, dayOfMonth -> editTextSubDueDate.setText((monthOfYear + 1).toString() + "/" + dayOfMonth.toString()) },
+                    { _, year, monthOfYear, dayOfMonth -> editTextSubDueDate.setText((monthOfYear + 1).toString() + "/" + dayOfMonth.toString() + "/" + year.toString()) },
                     year,
                     month,
                     day

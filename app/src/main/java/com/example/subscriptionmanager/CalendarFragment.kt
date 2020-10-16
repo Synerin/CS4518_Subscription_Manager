@@ -4,65 +4,56 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.CalendarView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import java.util.*
 import java.text.DateFormat
+import java.util.*
 
 private const val TAG = "CalendarFragment"
 
-class CalendarFragment: Fragment(){
-    private lateinit var firedatabase: FirebaseDatabase
-    private lateinit var calendarView: CalendarView
-    private lateinit var editTextDate: TextView
-    private lateinit var expenses: RecyclerView
-    private lateinit var dateSelected: Button
-    private var subList: MutableList<Subscription> = mutableListOf()
-    val calendar: Calendar = Calendar.getInstance()
+class CalendarFragment : Fragment() {
     private lateinit var databaseRef: DatabaseReference
+    private lateinit var calendarView: CalendarView
+    private lateinit var expensesRecyclerView: RecyclerView
+    private var subList: MutableList<Subscription> = mutableListOf()
     private var subsOnThisDay: MutableList<Subscription> = mutableListOf()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var selectedDate: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.activity_calendar, container, false)
+        val view = inflater.inflate(R.layout.fragment_calendar, container, false)
 
         calendarView = view.findViewById(R.id.full_calendar_view)
-        editTextDate = view.findViewById(R.id.edit_text_date)
-        expenses = view.findViewById(R.id.list_of_expenses)
-        dateSelected = view.findViewById(R.id.date_selected)
+        expensesRecyclerView = view.findViewById(R.id.expenses_recycler_view)
 
-        firedatabase = FirebaseDatabase.getInstance()
         val userID = FirebaseAuth.getInstance().currentUser?.uid
         databaseRef = userID?.let { FirebaseDatabase.getInstance().getReference(it) }!!
 
-        databaseRef.addValueEventListener(object: ValueEventListener {
+        databaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if(dataSnapshot.exists()) {
-                    for(user in dataSnapshot.children) {
+                if (dataSnapshot.exists()) {
+                    for (user in dataSnapshot.children) {
                         val sub = user.getValue(Subscription::class.java)
 
-                        if(sub != null) {
+                        if (sub != null) {
                             subList.add(sub)
                         }
                     }
-
+                    val adapter = SubAdapter(subList)
+                    expensesRecyclerView.adapter = adapter
                 }
             }
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-                //and probably wont be
-            }
 
+            override fun onCancelled(error: DatabaseError) {}
         })
 
         return view
@@ -70,37 +61,37 @@ class CalendarFragment: Fragment(){
 
     override fun onStart() {
         super.onStart()
-        calendarView.apply{
-            setOnDateChangeListener { view, year, month, dayOfMonth ->
-                calendar.set(year, month, dayOfMonth)
-                calendarView.date = calendar.timeInMillis
-                val dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM)
-                editTextDate.append(dateFormatter.format(calendar.time))
-            }
+        calendarView.setOnDateChangeListener { _, year, monthOfYear, dayOfMonth ->
+            selectedDate = (monthOfYear + 1).toString() + "/" + dayOfMonth.toString() + "/" + year.toString()
         }
+    }
 
-        dateSelected.apply {
-            setOnClickListener{
-                val selectedDate:Long = calendarView.date
-                calendar.timeInMillis = selectedDate
-                val dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM)
-                editTextDate.append(dateFormatter.format(calendar.time))
-            }
-
+    private inner class SubHolder(view: View):
+        RecyclerView.ViewHolder(view) {
+        val miniSubName: TextView = itemView.findViewById(R.id.mini_sub_name)
+        val miniSubCost: TextView = itemView.findViewById(R.id.mini_sub_cost)
+        val miniSubDue: TextView = itemView.findViewById(R.id.mini_sub_due)
+        fun bind(sub: Subscription) {
+            miniSubName.text = sub.subName
+            miniSubCost.text = "$${sub.subCost}"
+            miniSubDue.text = sub.subDueDate
         }
 
     }
 
-    private fun updateSubList(){
-        val selectedDate:Long = calendarView.date
-        val selectedDateString = selectedDate.toString()
-
-        for (sub in subList){
-            val dueDate = sub.subDueDate
-            if (dueDate.equals(selectedDateString)){
-                subsOnThisDay.add(sub)
-            }
+    private inner class SubAdapter(var subs: List<Subscription>): RecyclerView.Adapter<CalendarFragment.SubHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarFragment.SubHolder {
+            val view = layoutInflater.inflate(R.layout.list_item_sub_mini, parent, false)
+            return SubHolder(view)
         }
+
+        override fun getItemCount() = subs.size
+
+        override fun onBindViewHolder(holder: CalendarFragment.SubHolder, position: Int) {
+            val sub = subs[position]
+            holder.bind(sub)
+        }
+
     }
 
     companion object {
@@ -108,6 +99,4 @@ class CalendarFragment: Fragment(){
             return CalendarFragment()
         }
     }
-
-
 }

@@ -298,27 +298,20 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
         return result.toDouble()
     }
 
-    companion object {
-        fun newInstance(): HomeFragment {
-            return HomeFragment()
-        }
-    }
-
     private inner class SubHolder(view: View):
         RecyclerView.ViewHolder(view) {
         val miniSubName: TextView = itemView.findViewById(R.id.mini_sub_name)
         val miniSubCost: TextView = itemView.findViewById(R.id.mini_sub_cost)
         val miniSubDue: TextView = itemView.findViewById(R.id.mini_sub_due)
-
         fun bind(sub: Subscription) {
             miniSubName.text = sub.subName
             miniSubCost.text = "$${sub.subCost}"
             miniSubDue.text = getNextDue(sub.subDueDate, sub.subFrequency)
         }
+
     }
 
     private inner class SubAdapter(var subs: List<Subscription>): RecyclerView.Adapter<SubHolder>() {
-
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubHolder {
             val view = layoutInflater.inflate(R.layout.list_item_sub_mini, parent, false)
             return SubHolder(view)
@@ -330,6 +323,7 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
             val sub = subs[position]
             holder.bind(sub)
         }
+
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
@@ -338,5 +332,11 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
         TODO("Not yet implemented")
+    }
+
+    companion object {
+        fun newInstance(): HomeFragment {
+            return HomeFragment()
+        }
     }
 }
