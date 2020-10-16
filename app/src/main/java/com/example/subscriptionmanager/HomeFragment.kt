@@ -144,7 +144,7 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
             val dueDate = getNextDue(sub.subDueDate, sub.subFrequency).split("/")
             val m: Int = dueDate[0].toInt()
             val d: Int = dueDate[1].toInt()
-            if(m == month && day < d) expenses += parseMoney(sub.subCost)
+            if(m == month && day <= d) expenses += parseMoney(sub.subCost)
         }
 
         var ordinal: String
@@ -255,9 +255,9 @@ class HomeFragment: Fragment(), AdapterView.OnItemSelectedListener {
             }
             "Monthly" -> {
                 if(currentDay < givenDay) {
-                    resultCal.set(Calendar.MONTH, currentMonth)
+                    resultCal.set(Calendar.MONTH, currentMonth - 1)
                 } else {
-                    resultCal.set(Calendar.MONTH, currentMonth + 1)
+                    resultCal.set(Calendar.MONTH, currentMonth)
                 }
 
                 resultCal.set(Calendar.DAY_OF_MONTH, givenDay)
